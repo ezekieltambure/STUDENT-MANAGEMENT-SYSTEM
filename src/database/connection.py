@@ -1,65 +1,56 @@
-"""
-SQLite database connection management.
-
-This module provides a reusable database connection for the
-IBS Student Management System.
-"""
-
-from __future__ import annotations
-
-import sqlite3
 from pathlib import Path
+import sqlite3
 
-from src.config import DATABASE_PATH
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DATABASE_PATH = PROJECT_ROOT / "database" / "student_management.db"
 
 
 class DatabaseConnection:
     """Manage SQLite database connections."""
 
-    def __init__(self, database_path: Path | None = None) -> None:
-        """Initialize the database connection manager."""
-        self.database_path = database_path or DATABASE_PATH
-        self._connection: sqlite3.Connection | None = None
+    def __init__(self, database_path: Path = DATABASE_PATH) -> None:
+        self.database_path = database_path
+        self.connection: sqlite3.Connection | None = None
 
     def connect(self) -> sqlite3.Connection:
-        """
-        Create and return a SQLite database connection.
+        """Open and configure the SQLite database connection."""
 
-        Foreign-key enforcement is enabled for every connection.
-        """
-        if self._connection is None:
-            self.database_path.parent.mkdir(
-                parents=True,
-                exist_ok=True,
-            )
+        if self.connection is None:
+            self.connection = sqlite3.connect(self.database_path)
+            self.connection.row_factory = sqlite3.Row
 
-            self._connection = sqlite3.connect(
-                self.database_path
-            )
+            # Enable foreign-key enforcement.
+            self.connection.execute("PRAGMA foreign_keys = ON")
 
-            self._connection.row_factory = sqlite3.Row
-
-            self._connection.execute(
-                "PRAGMA foreign_keys = ON"
-            )
-
-        return self._connection
+        return self.connection
 
     def close(self) -> None:
-        """Close the active database connection."""
-        if self._connection is not None:
-            self._connection.close()
-            self._connection = None
+        """Close the database connection."""
+
+        if self.connection is not None:
+            self.connection.close()
+            self.connection = None
 
     def __enter__(self) -> sqlite3.Connection:
-        """Open the connection when entering a context manager."""
+        """Open the connection when entering a with-statement."""
+
         return self.connect()
 
-    def __exit__(
-        self,
-        exc_type: type[BaseException] | None,
-        exc_value: BaseException | None,
-        traceback: object | None,
-    ) -> None:
-        """Close the connection when leaving a context manager."""
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        """Commit/rollback and close the connection."""
+
+        if self.connection is not None:
+            if exc_type is None:
+                self.connection.commit()
+            else:
+                self.connection.rollback()
+
         self.close()
+
+
+def get_connection() -> sqlite3.Connection:
+    """Create and configure a SQLite database connection."""
+
+    database = DatabaseConnection()
+    return database.connect()
