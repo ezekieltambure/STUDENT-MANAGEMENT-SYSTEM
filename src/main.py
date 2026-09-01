@@ -1,3 +1,4 @@
+from src.views.dashboard_view import DashboardView
 from src.views.login_view import LoginView
 
 
@@ -10,11 +11,8 @@ def main() -> None:
     if user is None:
         return
 
-    print()
-    print("=" * 50)
-    print("Login session started.")
-    print(f"Welcome, {user.full_name}!")
-    print("=" * 50)
+    dashboard_view = DashboardView()
+    dashboard_view.run(user)
 
 
 if __name__ == "__main__":

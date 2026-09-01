@@ -1,5 +1,6 @@
 from src.controllers.dashboard_controller import DashboardController
 from src.models.user import User
+from src.views.student_view import StudentView
 
 
 class DashboardView:
@@ -8,15 +9,17 @@ class DashboardView:
     def __init__(
         self,
         dashboard_controller: DashboardController | None = None,
+        student_view: StudentView | None = None,
     ) -> None:
         """Initialize the dashboard view."""
 
         self.dashboard_controller = (
             dashboard_controller or DashboardController()
         )
+        self.student_view = student_view or StudentView()
 
     def display(self, user: User) -> None:
-        """Display the dashboard available to the user's role."""
+        """Display the dashboard without requesting user input."""
 
         dashboard = self.dashboard_controller.get_dashboard(user)
 
@@ -29,6 +32,62 @@ class DashboardView:
             self._display_staff_dashboard(user)
 
         print("=" * 50)
+
+    def run(self, user: User) -> None:
+        """Run the interactive dashboard menu."""
+
+        dashboard = self.dashboard_controller.get_dashboard(user)
+
+        while True:
+            self.display(user)
+
+            choice = input("Select an option: ").strip()
+
+            if choice == "0":
+                print()
+                print("Logging out...")
+                break
+
+            if dashboard == "admin" and choice == "2":
+                self.student_view_loop()
+                continue
+
+            if dashboard == "staff" and choice == "1":
+                self.student_view_loop()
+                continue
+
+            print()
+            print("Invalid option. Please try again.")
+
+    def student_view_loop(self) -> None:
+        """Run the student management menu."""
+
+        while True:
+            self.student_view.display_menu()
+
+            choice = input("Select an option: ").strip()
+
+            if choice == "1":
+                self.student_view.add_student()
+
+            elif choice == "2":
+                self.student_view.search_student()
+
+            elif choice == "3":
+                print()
+                print("Update Student functionality will be connected next.")
+
+            elif choice == "4":
+                self.student_view.delete_student()
+
+            elif choice == "5":
+                print()
+                print("Returning to dashboard...")
+                break
+
+            else:
+                print()
+                print("Invalid option. Please try again.")
 
     def _display_admin_dashboard(self, user: User) -> None:
         """Display the administrator dashboard."""
