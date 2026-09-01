@@ -100,6 +100,102 @@ class StudentView:
         self.display_student(student)
         return student
 
+    def update_student(self) -> Optional[Student]:
+        """Update an existing student's information."""
+
+        print()
+        print("-" * 50)
+        print("            UPDATE STUDENT")
+        print("-" * 50)
+
+        student_id_text = input("Student ID: ").strip()
+
+        try:
+            student_id = int(student_id_text)
+        except ValueError:
+            print()
+            print("Invalid student ID.")
+            return None
+
+        student = self.student_controller.find_by_id(student_id)
+
+        if student is None:
+            print()
+            print("Student not found.")
+            return None
+
+        print()
+        print("Enter the new student information.")
+
+        student_number = input(
+            f"Student Number [{student.student_number}]: "
+        ).strip()
+        first_name = input(
+            f"First Name [{student.first_name}]: "
+        ).strip()
+        last_name = input(
+            f"Last Name [{student.last_name}]: "
+        ).strip()
+        date_of_birth_text = input(
+            f"Date of Birth [{student.date_of_birth}]: "
+        ).strip()
+        gender = input(
+            f"Gender [{student.gender}]: "
+        ).strip()
+        program = input(
+            f"Program [{student.program}]: "
+        ).strip()
+        email = input(
+            f"Email [{student.email}]: "
+        ).strip()
+        phone = input(
+            f"Phone [{student.phone}]: "
+        ).strip()
+
+        try:
+            if student_number:
+                student.student_number = student_number
+
+            if first_name:
+                student.first_name = first_name
+
+            if last_name:
+                student.last_name = last_name
+
+            if date_of_birth_text:
+                student.date_of_birth = date.fromisoformat(
+                    date_of_birth_text
+                )
+
+            if gender:
+                student.gender = gender
+
+            if program:
+                student.program = program
+
+            if email:
+                student.email = email
+
+            if phone:
+                student.phone = phone
+
+            updated_student = self.student_controller.update_student(
+                student
+            )
+
+            print()
+            print("Student updated successfully.")
+            print(f"Student ID: {updated_student.id}")
+            print(f"Student Number: {updated_student.student_number}")
+            print(f"Name: {updated_student.full_name}")
+
+            return updated_student
+
+        except ValueError as error:
+            print()
+            print(f"Unable to update student: {error}")
+            return None
+
     @staticmethod
     def display_student(student: Student) -> None:
         """Display student information."""

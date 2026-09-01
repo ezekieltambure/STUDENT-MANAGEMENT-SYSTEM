@@ -207,3 +207,109 @@ def test_student_view_reports_missing_student_on_delete(monkeypatch, capsys):
     output = capsys.readouterr().out
 
     assert "Student not found." in output
+
+def test_student_view_can_update_student(monkeypatch, capsys):
+    """Verify that the student view can update an existing student."""
+
+    from datetime import date
+
+    from src.models.student import Student
+    from src.views.student_view import StudentView
+
+    existing_student = Student(
+        id=1,
+        student_number="ST001",
+        first_name="John",
+        last_name="Doe",
+        date_of_birth=date(2000, 1, 1),
+        gender="Male",
+        program="Information Technology",
+        email="john@example.com",
+        phone="70000000",
+    )
+
+    updated_student = Student(
+        id=1,
+        student_number="ST001",
+        first_name="James",
+        last_name="Doe",
+        date_of_birth=date(2000, 1, 1),
+        gender="Male",
+        program="Information Technology",
+        email="james@example.com",
+        phone="70000000",
+    )
+
+    class FakeController:
+        def find_by_id(self, student_id):
+            return existing_student
+
+        def update_student(self, student):
+            return updated_student
+
+    inputs = iter([
+        "1",
+        "",
+        "James",
+        "",
+        "",
+        "",
+        "",
+        "james@example.com",
+        "",
+    ])
+
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+
+    view = StudentView(FakeController())
+
+    result = view.update_student()
+
+    captured = capsys.readouterr()
+
+    assert result == updated_student
+    assert "Student updated successfully." in captured.out
+
+
+def test_student_view_rejects_invalid_update_student_id(monkeypatch, capsys):
+    """Verify that an invalid student ID is rejected during update."""
+
+    from src.views.student_view import StudentView
+
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: "invalid",
+    )
+
+    view = StudentView()
+
+    result = view.update_student()
+
+    captured = capsys.readouterr()
+
+    assert result is None
+    assert "Invalid student ID." in captured.out
+
+
+def test_student_view_reports_missing_student_on_update(monkeypatch, capsys):
+    """Verify that updating a missing student is rejected."""
+
+    from src.views.student_view import StudentView
+
+    class FakeController:
+        def find_by_id(self, student_id):
+            return None
+
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: "999",
+    )
+
+    view = StudentView(FakeController())
+
+    result = view.update_student()
+
+    captured = capsys.readouterr()
+
+    assert result is None
+    assert "Student not found." in captured.out
