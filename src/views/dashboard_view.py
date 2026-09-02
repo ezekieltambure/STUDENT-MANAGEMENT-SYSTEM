@@ -1,6 +1,11 @@
 from src.controllers.dashboard_controller import DashboardController
 from src.models.user import User
 from src.views.student_view import StudentView
+from src.views.user_view import UserView
+from src.views.department_view import DepartmentView
+from src.views.course_view import CourseView
+from src.views.enrollment_view import EnrollmentView
+from src.views.grade_view import GradeView
 
 
 class DashboardView:
@@ -10,6 +15,11 @@ class DashboardView:
         self,
         dashboard_controller: DashboardController | None = None,
         student_view: StudentView | None = None,
+        user_view: UserView | None = None,
+        department_view: DepartmentView | None = None,
+        course_view: CourseView | None = None,
+        enrollment_view: EnrollmentView | None = None,
+        grade_view: GradeView | None = None,
     ) -> None:
         """Initialize the dashboard view."""
 
@@ -17,6 +27,11 @@ class DashboardView:
             dashboard_controller or DashboardController()
         )
         self.student_view = student_view or StudentView()
+        self.user_view = user_view or UserView()
+        self.department_view = department_view or DepartmentView()
+        self.course_view = course_view or CourseView()
+        self.enrollment_view = enrollment_view or EnrollmentView()
+        self.grade_view = grade_view or GradeView()
 
     def display(self, user: User) -> None:
         """Display the dashboard without requesting user input."""
@@ -48,8 +63,26 @@ class DashboardView:
                 print("Logging out...")
                 break
 
+            if dashboard == "admin" and choice == "1":
+                self.user_view.run()
+                continue
+
             if dashboard == "admin" and choice == "2":
                 self.student_view_loop()
+                continue
+            if dashboard == "admin" and choice == "3":
+                self.department_view.run()
+                continue
+            if dashboard == "admin" and choice == "4":
+                self.course_view.run()
+                continue
+
+            if dashboard == "admin" and choice == "5":
+                self.enrollment_view.run()
+                continue
+
+            if dashboard == "admin" and choice == "6":
+                self.grade_view.run()
                 continue
 
             if dashboard == "staff" and choice == "1":
