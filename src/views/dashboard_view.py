@@ -70,9 +70,11 @@ class DashboardView:
             if dashboard == "admin" and choice == "2":
                 self.student_view_loop()
                 continue
+
             if dashboard == "admin" and choice == "3":
                 self.department_view.run()
                 continue
+
             if dashboard == "admin" and choice == "4":
                 self.course_view.run()
                 continue
@@ -87,6 +89,18 @@ class DashboardView:
 
             if dashboard == "staff" and choice == "1":
                 self.student_view_loop()
+                continue
+
+            if dashboard == "staff" and choice == "2":
+                self.course_view.run()
+                continue
+
+            if dashboard == "staff" and choice == "3":
+                self.enrollment_view.run()
+                continue
+
+            if dashboard == "staff" and choice == "4":
+                self.grade_view.run()
                 continue
 
             print()
