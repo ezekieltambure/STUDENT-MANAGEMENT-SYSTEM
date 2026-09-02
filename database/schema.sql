@@ -98,6 +98,8 @@ CREATE TABLE IF NOT EXISTS students (
 
     phone TEXT,
 
+    program TEXT NOT NULL,
+
     address TEXT,
 
     department_id INTEGER,
