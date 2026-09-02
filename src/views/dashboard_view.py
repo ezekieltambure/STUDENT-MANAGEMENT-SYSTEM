@@ -121,8 +121,7 @@ class DashboardView:
                 self.student_view.search_student()
 
             elif choice == "3":
-                print()
-                print("Update Student functionality will be connected next.")
+                self.student_view.update_student()
 
             elif choice == "4":
                 self.student_view.delete_student()
