@@ -6,6 +6,7 @@ from src.views.department_view import DepartmentView
 from src.views.course_view import CourseView
 from src.views.enrollment_view import EnrollmentView
 from src.views.grade_view import GradeView
+from src.views.report_view import ReportView
 
 
 class DashboardView:
@@ -20,6 +21,7 @@ class DashboardView:
         course_view: CourseView | None = None,
         enrollment_view: EnrollmentView | None = None,
         grade_view: GradeView | None = None,
+        report_view: ReportView | None = None,
     ) -> None:
         """Initialize the dashboard view."""
 
@@ -32,6 +34,7 @@ class DashboardView:
         self.course_view = course_view or CourseView()
         self.enrollment_view = enrollment_view or EnrollmentView()
         self.grade_view = grade_view or GradeView()
+        self.report_view = report_view or ReportView()
 
     def display(self, user: User) -> None:
         """Display the dashboard without requesting user input."""
@@ -87,6 +90,10 @@ class DashboardView:
                 self.grade_view.run()
                 continue
 
+            if dashboard == "admin" and choice == "7":
+                self.report_view.run()
+                continue
+
             if dashboard == "staff" and choice == "1":
                 self.student_view_loop()
                 continue
@@ -101,6 +108,10 @@ class DashboardView:
 
             if dashboard == "staff" and choice == "4":
                 self.grade_view.run()
+                continue
+
+            if dashboard == "staff" and choice == "5":
+                self.report_view.run()
                 continue
 
             print()
