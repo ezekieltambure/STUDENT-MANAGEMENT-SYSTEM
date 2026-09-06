@@ -3,7 +3,6 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from src.controllers.login_controller import LoginController
 from src.controllers.dashboard_controller import DashboardController
 from src.models.user import User
-from src.models.user import User
 
 
 def create_app() -> Flask:
