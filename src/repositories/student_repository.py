@@ -132,6 +132,46 @@ class StudentRepository:
         finally:
             connection.close()
 
+    def find_by_email(
+        self,
+        email: str,
+    ) -> Optional[Student]:
+        """Find a student by email address."""
+
+        connection = get_connection()
+
+        try:
+            cursor = connection.cursor()
+
+            cursor.execute(
+                """
+                SELECT
+                    student_id,
+                    student_number,
+                    first_name,
+                    last_name,
+                    date_of_birth,
+                    gender,
+                    program,
+                    email,
+                    phone,
+                    status
+                FROM students
+                WHERE email = ?
+                """,
+                (email,),
+            )
+
+            row = cursor.fetchone()
+
+            if row is None:
+                return None
+
+            return self._row_to_student(row)
+
+        finally:
+            connection.close()
+
     def find_all(self) -> list[Student]:
         """Return all students ordered by last name and first name."""
 
@@ -184,6 +224,29 @@ class StudentRepository:
                 LIMIT 1
                 """,
                 (student_number,),
+            )
+
+            return cursor.fetchone() is not None
+
+        finally:
+            connection.close()
+
+    def exists_by_email(self, email: str) -> bool:
+        """Check whether an email address exists."""
+
+        connection = get_connection()
+
+        try:
+            cursor = connection.cursor()
+
+            cursor.execute(
+                """
+                SELECT 1
+                FROM students
+                WHERE email = ?
+                LIMIT 1
+                """,
+                (email,),
             )
 
             return cursor.fetchone() is not None

@@ -25,6 +25,11 @@ class StudentService:
         ):
             raise ValueError("Student number already exists.")
 
+        if self.student_repository.exists_by_email(
+            student.email
+        ):
+            raise ValueError("Email address already exists.")
+
         return self.student_repository.create(student)
 
     def find_by_id(self, student_id: int) -> Optional[Student]:
@@ -54,7 +59,7 @@ class StudentService:
         self,
         student_number: str,
     ) -> bool:
-        """Check whether a student number already exists."""
+        """Check whether a student number exists."""
 
         if not student_number.strip():
             return False
@@ -80,6 +85,21 @@ class StudentService:
             and existing_student.id != student.id
         ):
             raise ValueError("Student number already exists.")
+
+        existing_email_student = None
+
+        if student.email.strip():
+            existing_email_student = (
+                self.student_repository.find_by_email(
+                    student.email
+                )
+            )
+
+        if (
+            existing_email_student is not None
+            and existing_email_student.id != student.id
+        ):
+            raise ValueError("Email address already exists.")
 
         return self.student_repository.update(student)
 
