@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Add Student | IBS Student Management System{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Add Student</h2>
+        <p>Register a new student in the IBS Student Management System.</p>
+    </div>
+
+    <a href="{{ url_for('students.list_students') }}" class="btn btn-secondary">
+        ← Back to Students
+    </a>
+</div>
+
+<div class="card form-card">
+
+    {% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label for="student_number">Student Number</label>
+                <input
+                    type="text"
+                    id="student_number"
+                    name="student_number"
+                    class="form-control"
+                    placeholder="e.g. IBS2026001"
+                    value="{{ request.form.get('student_number', '') }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input
+                    type="text"
+                    id="first_name"
+                    name="first_name"
+                    class="form-control"
+                    placeholder="Enter first name"
+                    value="{{ request.form.get('first_name', '') }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input
+                    type="text"
+                    id="last_name"
+                    name="last_name"
+                    class="form-control"
+                    placeholder="Enter last name"
+                    value="{{ request.form.get('last_name', '') }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="date_of_birth">Date of Birth</label>
+                <input
+                    type="date"
+                    id="date_of_birth"
+                    name="date_of_birth"
+                    class="form-control"
+                    value="{{ request.form.get('date_of_birth', '') }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select
+                    id="gender"
+                    name="gender"
+                    class="form-control"
+                    required
+                >
+                    <option value="">Select gender</option>
+                    <option value="Male"
+                        {% if request.form.get('gender') == 'Male' %}selected{% endif %}>
+                        Male
+                    </option>
+                    <option value="Female"
+                        {% if request.form.get('gender') == 'Female' %}selected{% endif %}>
+                        Female
+                    </option>
+                    <option value="Other"
+                        {% if request.form.get('gender') == 'Other' %}selected{% endif %}>
+                        Other
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="program">Program</label>
+                <input
+                    type="text"
+                    id="program"
+                    name="program"
+                    class="form-control"
+                    placeholder="e.g. Bachelor of Information Technology"
+                    value="{{ request.form.get('program', '') }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-control"
+                    placeholder="student@example.com"
+                    value="{{ request.form.get('email', '') }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    class="form-control"
+                    placeholder="Enter phone number"
+                    value="{{ request.form.get('phone', '') }}"
+                    required
+                >
+            </div>
+
+        </div>
+
+        <div class="form-actions">
+            <a
+                href="{{ url_for('students.list_students') }}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                Save Student
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

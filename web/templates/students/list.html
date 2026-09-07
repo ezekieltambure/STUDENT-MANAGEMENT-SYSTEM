@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Students | IBS Student Management System{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Students</h2>
+        <p>View and manage registered students.</p>
+    </div>
+
+    <a href="#" class="btn btn-primary" style="width: auto;">
+        + Add Student
+    </a>
+</div>
+
+<div class="card">
+
+    {% if students %}
+
+    <div style="overflow-x: auto;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Student Number</th>
+                    <th>Full Name</th>
+                    <th>Program</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.id }}</td>
+                    <td>{{ student.student_number }}</td>
+                    <td>{{ student.full_name }}</td>
+                    <td>{{ student.program }}</td>
+                    <td>{{ student.email }}</td>
+                    <td>{{ student.phone }}</td>
+
+                    <td>
+                        {% if student.is_active %}
+                            <span class="status-badge status-active">
+                                Active
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-inactive">
+                                Inactive
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <a href="#" class="action-link">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+        <h3>No Students Found</h3>
+        <p>
+            There are currently no students registered in the system.
+        </p>
+
+        <a href="#" class="btn btn-primary" style="width: auto;">
+            Add First Student
+        </a>
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
