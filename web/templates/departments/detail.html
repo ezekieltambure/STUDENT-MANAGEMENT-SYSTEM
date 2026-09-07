@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}{{ department.department_name }} | IBS Student Management System{% endblock %}
+
+{% block content %}
+<div class="department-detail-page">
+
+    <div class="page-header detail-page-header">
+
+        <div>
+            <p class="eyebrow">ACADEMIC MANAGEMENT</p>
+
+            <h2>Department Details</h2>
+
+            <p>
+                View the complete academic department record.
+            </p>
+        </div>
+
+        <div class="detail-header-actions">
+
+            <a
+                href="{{ url_for('departments.list_departments') }}"
+                class="btn btn-secondary">
+                Back to Departments
+            </a>
+
+            <a
+                href="{{ url_for('departments.edit_department', department_id=department.id) }}"
+                class="btn btn-primary">
+                Edit Department
+            </a>
+
+        </div>
+
+    </div>
+
+    <section class="card department-profile-card">
+
+        <div class="department-profile-main">
+
+            <div class="department-profile-avatar">
+                {{ department.department_code[:2] }}
+            </div>
+
+            <div class="department-profile-info">
+
+                <span class="profile-label">
+                    DEPARTMENT
+                </span>
+
+                <h3>
+                    {{ department.department_name }}
+                </h3>
+
+                <div class="profile-department-code">
+                    {{ department.department_code }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <div class="department-detail-grid">
+
+        <section class="card detail-card">
+
+            <div class="detail-card-header">
+
+                <div class="detail-section-icon">
+                    D
+                </div>
+
+                <div>
+                    <p class="eyebrow">IDENTIFICATION</p>
+                    <h3>Department Information</h3>
+                </div>
+
+            </div>
+
+            <div class="detail-information-grid">
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Department ID
+                    </span>
+
+                    <span class="detail-value">
+                        #{{ department.id }}
+                    </span>
+
+                </div>
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Department Code
+                    </span>
+
+                    <span class="detail-value">
+                        {{ department.department_code }}
+                    </span>
+
+                </div>
+
+                <div class="detail-item detail-item-wide">
+
+                    <span class="detail-label">
+                        Department Name
+                    </span>
+
+                    <span class="detail-value">
+                        {{ department.department_name }}
+                    </span>
+
+                </div>
+
+                <div class="detail-item detail-item-wide">
+
+                    <span class="detail-label">
+                        Description
+                    </span>
+
+                    <span class="detail-value detail-description-value">
+                        {% if department.description %}
+                            {{ department.description }}
+                        {% else %}
+                            No description provided.
+                        {% endif %}
+                    </span>
+
+                </div>
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Created
+                    </span>
+
+                    <span class="detail-value">
+                        {{ department.created_at or "—" }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <aside class="card department-management-card">
+
+            <div class="detail-card-header">
+
+                <div class="detail-section-icon">
+                    ⚙
+                </div>
+
+                <div>
+                    <p class="eyebrow">MANAGEMENT</p>
+                    <h3>Department Actions</h3>
+                </div>
+
+            </div>
+
+            <p class="management-description">
+                Manage this academic department record.
+            </p>
+
+            <div class="management-actions">
+
+                <a
+                    href="{{ url_for('departments.edit_department', department_id=department.id) }}"
+                    class="btn btn-primary">
+                    Edit Department
+                </a>
+
+                <form
+                    method="POST"
+                    action="{{ url_for('departments.delete_department', department_id=department.id) }}"
+                    onsubmit="return confirm('Are you sure you want to delete this department? This may fail if courses are linked to it.');">
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger">
+                        Delete Department
+                    </button>
+
+                </form>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+{% endblock %}

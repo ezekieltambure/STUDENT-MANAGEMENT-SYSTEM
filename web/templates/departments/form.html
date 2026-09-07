@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% if department %}
+    {% set page_title = "Edit Department" %}
+{% else %}
+    {% set page_title = "Add Department" %}
+{% endif %}
+
+{% block title %}{{ page_title }} | IBS Student Management System{% endblock %}
+
+{% block content %}
+<div class="department-form-page">
+
+    <div class="page-header department-form-header">
+
+        <div>
+            <p class="eyebrow">ACADEMIC MANAGEMENT</p>
+
+            <h2>{{ page_title }}</h2>
+
+            <p>
+                {% if department %}
+                    Update the academic department information.
+                {% else %}
+                    Register a new academic department.
+                {% endif %}
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('departments.list_departments') }}"
+            class="btn btn-secondary">
+            Back to Departments
+        </a>
+
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger form-alert">
+        <strong>Unable to save department</strong>
+        <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+    <form method="POST" class="department-registration-form">
+
+        <section class="card registration-card">
+
+            <div class="registration-section-header">
+
+                <div class="registration-icon">D</div>
+
+                <div>
+                    <p class="eyebrow">DEPARTMENT INFORMATION</p>
+
+                    <h3>Academic Department</h3>
+
+                    <p>
+                        Enter the department's official identification
+                        and information.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="registration-grid">
+
+                <div class="form-group">
+
+                    <label for="department_code">
+                        Department Code
+                        <span class="required-mark">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="department_code"
+                        name="department_code"
+                        class="form-control"
+                        value="{{ request.form.get('department_code', department.department_code if department else '') }}"
+                        placeholder="e.g. IT"
+                        required
+                        maxlength="20"
+                        autocomplete="off"
+                    >
+
+                    <small class="field-help">
+                        Use the official short code for the department.
+                    </small>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="department_name">
+                        Department Name
+                        <span class="required-mark">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="department_name"
+                        name="department_name"
+                        class="form-control"
+                        value="{{ request.form.get('department_name', department.department_name if department else '') }}"
+                        placeholder="e.g. Information Technology"
+                        required
+                        maxlength="150"
+                    >
+
+                    <small class="field-help">
+                        Enter the official department name.
+                    </small>
+
+                </div>
+
+                <div class="form-group form-group-wide">
+
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        class="form-control"
+                        rows="5"
+                        placeholder="Enter a short description of the department..."
+                        maxlength="500"
+                    >{{ request.form.get('description', department.description if department else '') }}</textarea>
+
+                    <small class="field-help">
+                        Optional description of the department.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="card registration-actions-card">
+
+            <div>
+
+                <p class="eyebrow">FINAL STEP</p>
+
+                <h3>
+                    {% if department %}
+                        Save Changes
+                    {% else %}
+                        Complete Registration
+                    {% endif %}
+                </h3>
+
+                <p>
+                    Review the information before saving the department.
+                    Required fields are marked with an asterisk.
+                </p>
+
+            </div>
+
+            <div class="registration-actions">
+
+                <a
+                    href="{% if department %}{{ url_for('departments.view_department', department_id=department.id) }}{% else %}{{ url_for('departments.list_departments') }}{% endif %}"
+                    class="btn btn-secondary">
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary registration-submit">
+
+                    {% if department %}
+                        Save Changes
+                    {% else %}
+                        Register Department
+                    {% endif %}
+
+                </button>
+
+            </div>
+
+        </section>
+
+    </form>
+
+</div>
+{% endblock %}

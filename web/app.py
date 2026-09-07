@@ -5,6 +5,7 @@ from src.controllers.dashboard_controller import DashboardController
 from src.models.user import User
 
 from web.routes.student_routes import student_bp
+from web.routes.department_routes import department_bp
 
 
 def create_app() -> Flask:
@@ -16,6 +17,7 @@ def create_app() -> Flask:
 
     # Register application blueprints
     app.register_blueprint(student_bp)
+    app.register_blueprint(department_bp)
 
     # Initialize application controllers
     login_controller = LoginController()
