@@ -254,6 +254,121 @@ class StudentRepository:
         finally:
             connection.close()
 
+    def count_all(self) -> int:
+        """Return the total number of students."""
+
+        connection = get_connection()
+
+        try:
+            cursor = connection.cursor()
+            cursor.execute(
+                """
+                SELECT COUNT(*)
+                FROM students
+                """
+            )
+            result = cursor.fetchone()
+            return int(result[0])
+        finally:
+            connection.close()
+
+    def count_active(self) -> int:
+        """Return the number of active students."""
+
+        connection = get_connection()
+
+        try:
+            cursor = connection.cursor()
+            cursor.execute(
+                """
+                SELECT COUNT(*)
+                FROM students
+                WHERE status = ?
+                """,
+                ("Active",),
+            )
+            result = cursor.fetchone()
+            return int(result[0])
+        finally:
+            connection.close()
+
+    def count_inactive(self) -> int:
+        """Return the number of inactive students."""
+
+        connection = get_connection()
+
+        try:
+            cursor = connection.cursor()
+            cursor.execute(
+                """
+                SELECT COUNT(*)
+                FROM students
+                WHERE status = ?
+                """,
+                ("Inactive",),
+            )
+            result = cursor.fetchone()
+            return int(result[0])
+        finally:
+            connection.close()
+
+    def count_programs(self) -> int:
+        """Return the number of distinct student programs."""
+
+        connection = get_connection()
+
+        try:
+            cursor = connection.cursor()
+            cursor.execute(
+                """
+                SELECT COUNT(DISTINCT program)
+                FROM students
+                WHERE program IS NOT NULL
+                  AND TRIM(program) != ''
+                """
+            )
+            result = cursor.fetchone()
+            return int(result[0])
+        finally:
+            connection.close()
+
+    def find_recent(self, limit: int = 5) -> list[Student]:
+        """Return the most recently registered students."""
+
+        if limit <= 0:
+            return []
+
+        connection = get_connection()
+
+        try:
+            cursor = connection.cursor()
+            cursor.execute(
+                """
+                SELECT
+                    student_id,
+                    student_number,
+                    first_name,
+                    last_name,
+                    date_of_birth,
+                    gender,
+                    program,
+                    email,
+                    phone,
+                    status
+                FROM students
+                ORDER BY created_at DESC
+                LIMIT ?
+                """,
+                (limit,),
+            )
+            rows = cursor.fetchall()
+            return [
+                self._row_to_student(row)
+                for row in rows
+            ]
+        finally:
+            connection.close()
+
     def find_all(self) -> list[Student]:
         """Return all students ordered by last name and first name."""
 

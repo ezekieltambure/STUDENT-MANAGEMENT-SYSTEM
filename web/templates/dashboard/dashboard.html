@@ -3,40 +3,179 @@
 {% block title %}Dashboard | IBS Student Management System{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div>
-        <h2>Dashboard</h2>
-        <p>Welcome back, {{ session.get('full_name') }}.</p>
-    </div>
-</div>
+<div class="dashboard-page">
 
-<div class="stats-grid">
-    <div class="stat-card">
-        <span class="label">User</span>
-        <span class="value">{{ session.get('full_name') }}</span>
-    </div>
+    <div class="page-header dashboard-header">
+        <div>
+            <p class="eyebrow">IBS STUDENT MANAGEMENT SYSTEM</p>
+            <h2>Dashboard</h2>
+            <p>Welcome back, {{ session.get("full_name") }}. Here is your student management overview.</p>
+        </div>
 
-    <div class="stat-card">
-        <span class="label">Role</span>
-        <span class="value">{{ session.get('role')|capitalize }}</span>
+        <div class="dashboard-user">
+            <span class="dashboard-role">{{ session.get("role")|capitalize }}</span>
+        </div>
     </div>
 
-    <div class="stat-card">
-        <span class="label">Dashboard</span>
-        <span class="value">{{ dashboard_type|capitalize }}</span>
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-icon">👨‍🎓</div>
+            <div>
+                <span class="label">Total Students</span>
+                <span class="value">{{ total_students }}</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">✓</div>
+            <div>
+                <span class="label">Active Students</span>
+                <span class="value">{{ active_students }}</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div>
+                <span class="label">Inactive Students</span>
+                <span class="value">{{ inactive_students }}</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🎓</div>
+            <div>
+                <span class="label">Programs</span>
+                <span class="value">{{ program_count }}</span>
+            </div>
+        </div>
+
     </div>
 
-    <div class="stat-card">
-        <span class="label">System</span>
-        <span class="value">Active</span>
-    </div>
-</div>
+    <div class="dashboard-grid">
 
-<div class="card" style="margin-top: 24px;">
-    <h3>IBS Student Management System</h3>
-    <p>
-        You are successfully logged in. Use the dashboard to manage
-        student records and access the functions available to your role.
-    </p>
+        <section class="card recent-card">
+            <div class="card-header">
+                <div>
+                    <h3>Recently Registered Students</h3>
+                    <p>Latest students added to the system.</p>
+                </div>
+
+                <a href="{{ url_for('students.list_students') }}" class="btn btn-secondary">
+                    View All
+                </a>
+            </div>
+
+            {% if recent_students %}
+            <div class="table-wrapper">
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>Student Number</th>
+                            <th>Student Name</th>
+                            <th>Program</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for student in recent_students %}
+                        <tr>
+                            <td>
+                                <strong>{{ student.student_number }}</strong>
+                            </td>
+
+                            <td>{{ student.full_name }}</td>
+
+                            <td>{{ student.program }}</td>
+
+                            <td>
+                                {% if student.is_active %}
+                                <span class="status-badge status-active">Active</span>
+                                {% else %}
+                                <span class="status-badge status-inactive">Inactive</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <a href="{{ url_for('students.view_student', student_id=student.id) }}" class="table-action">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">👨‍🎓</div>
+                <h4>No Students Registered</h4>
+                <p>There are currently no student records in the system.</p>
+
+                <a href="{{ url_for('students.create_student') }}" class="btn btn-primary">
+                    Add First Student
+                </a>
+            </div>
+            {% endif %}
+        </section>
+
+        <aside class="card quick-actions-card">
+            <div class="card-header">
+                <div>
+                    <h3>Quick Actions</h3>
+                    <p>Common student management tasks.</p>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+
+                <a href="{{ url_for('students.create_student') }}" class="quick-action">
+                    <span class="quick-action-icon">+</span>
+                    <span>
+                        <strong>Add Student</strong>
+                        <small>Register a new student</small>
+                    </span>
+                </a>
+
+                <a href="{{ url_for('students.list_students') }}" class="quick-action">
+                    <span class="quick-action-icon">☷</span>
+                    <span>
+                        <strong>View Students</strong>
+                        <small>Browse student records</small>
+                    </span>
+                </a>
+
+                <a href="{{ url_for('students.list_students') }}" class="quick-action">
+                    <span class="quick-action-icon">⌕</span>
+                    <span>
+                        <strong>Search Students</strong>
+                        <small>Find a student record</small>
+                    </span>
+                </a>
+
+            </div>
+        </aside>
+
+    </div>
+
+    <section class="card system-card">
+        <div>
+            <p class="eyebrow">SYSTEM STATUS</p>
+            <h3>IBS Student Management System</h3>
+            <p>
+                The system is connected to the student database and operating normally.
+                Your dashboard displays live information from the database.
+            </p>
+        </div>
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            <span>System Active</span>
+        </div>
+    </section>
+
 </div>
 {% endblock %}

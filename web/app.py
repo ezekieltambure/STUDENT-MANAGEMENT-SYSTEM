@@ -40,7 +40,6 @@ def create_app() -> Flask:
                     error="Invalid username or password.",
                 )
 
-            # Store authenticated user information in the session.
             session["user_id"] = user.id
             session["username"] = user.username
             session["full_name"] = user.full_name
@@ -60,7 +59,7 @@ def create_app() -> Flask:
 
     @app.route("/dashboard")
     def dashboard():
-        """Display the role-based dashboard."""
+        """Display the role-based dashboard with live database data."""
 
         if "user_id" not in session:
             return redirect(url_for("home"))
@@ -73,10 +72,12 @@ def create_app() -> Flask:
         )
 
         dashboard_type = dashboard_controller.get_dashboard(user)
+        dashboard_data = dashboard_controller.get_dashboard_data()
 
         return render_template(
             "dashboard/dashboard.html",
             dashboard_type=dashboard_type,
+            **dashboard_data,
         )
 
     return app
