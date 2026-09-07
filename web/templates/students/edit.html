@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Student | IBS Student Management System{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Edit Student</h2>
+        <p>Update the student's information.</p>
+    </div>
+
+    <a
+        href="{{ url_for('students.view_student', student_id=student.id) }}"
+        class="btn btn-secondary"
+    >
+        ← Back to Details
+    </a>
+</div>
+
+<div class="card form-card">
+
+    {% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label for="student_number">Student Number</label>
+                <input
+                    type="text"
+                    id="student_number"
+                    name="student_number"
+                    class="form-control"
+                    value="{{ request.form.get('student_number', student.student_number) }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input
+                    type="text"
+                    id="first_name"
+                    name="first_name"
+                    class="form-control"
+                    value="{{ request.form.get('first_name', student.first_name) }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input
+                    type="text"
+                    id="last_name"
+                    name="last_name"
+                    class="form-control"
+                    value="{{ request.form.get('last_name', student.last_name) }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="date_of_birth">Date of Birth</label>
+                <input
+                    type="date"
+                    id="date_of_birth"
+                    name="date_of_birth"
+                    class="form-control"
+                    value="{{ request.form.get('date_of_birth', student.date_of_birth.isoformat()) }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender</label>
+
+                <select
+                    id="gender"
+                    name="gender"
+                    class="form-control"
+                    required
+                >
+                    <option value="">Select gender</option>
+
+                    <option
+                        value="Male"
+                        {% if request.form.get('gender', student.gender) == 'Male' %}
+                        selected
+                        {% endif %}
+                    >
+                        Male
+                    </option>
+
+                    <option
+                        value="Female"
+                        {% if request.form.get('gender', student.gender) == 'Female' %}
+                        selected
+                        {% endif %}
+                    >
+                        Female
+                    </option>
+
+                    <option
+                        value="Other"
+                        {% if request.form.get('gender', student.gender) == 'Other' %}
+                        selected
+                        {% endif %}
+                    >
+                        Other
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="program">Program</label>
+
+                <input
+                    type="text"
+                    id="program"
+                    name="program"
+                    class="form-control"
+                    value="{{ request.form.get('program', student.program) }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-control"
+                    value="{{ request.form.get('email', student.email) }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+
+                <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    class="form-control"
+                    value="{{ request.form.get('phone', student.phone) }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status</label>
+
+                <select
+                    id="status"
+                    name="status"
+                    class="form-control"
+                    required
+                >
+                    <option
+                        value="Active"
+                        {% if request.form.get('status', 'Active' if student.is_active else 'Inactive') == 'Active' %}
+                        selected
+                        {% endif %}
+                    >
+                        Active
+                    </option>
+
+                    <option
+                        value="Inactive"
+                        {% if request.form.get('status', 'Active' if student.is_active else 'Inactive') == 'Inactive' %}
+                        selected
+                        {% endif %}
+                    >
+                        Inactive
+                    </option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="form-actions">
+
+            <a
+                href="{{ url_for('students.view_student', student_id=student.id) }}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Save Changes
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

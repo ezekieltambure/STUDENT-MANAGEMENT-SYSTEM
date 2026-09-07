@@ -1,6 +1,13 @@
 from datetime import date
 
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+)
 
 from src.controllers.student_controller import StudentController
 from src.models.student import Student
@@ -121,5 +128,103 @@ def view_student(student_id: int):
 
     return render_template(
         "students/detail.html",
+        student=student,
+    )
+
+
+@student_bp.route(
+    "/<int:student_id>/edit",
+    methods=["GET", "POST"],
+)
+def edit_student(student_id: int):
+    """Display and process the edit student form."""
+
+    if "user_id" not in session:
+        return redirect(url_for("home"))
+
+    student = student_controller.find_by_id(student_id)
+
+    if student is None:
+        return render_template(
+            "students/detail.html",
+            student=None,
+            error="Student not found.",
+        ), 404
+
+    if request.method == "POST":
+        student_number = request.form.get(
+            "student_number", ""
+        ).strip()
+
+        first_name = request.form.get(
+            "first_name", ""
+        ).strip()
+
+        last_name = request.form.get(
+            "last_name", ""
+        ).strip()
+
+        date_of_birth_value = request.form.get(
+            "date_of_birth", ""
+        ).strip()
+
+        gender = request.form.get(
+            "gender", ""
+        ).strip()
+
+        program = request.form.get(
+            "program", ""
+        ).strip()
+
+        email = request.form.get(
+            "email", ""
+        ).strip()
+
+        phone = request.form.get(
+            "phone", ""
+        ).strip()
+
+        status = request.form.get(
+            "status", ""
+        ).strip()
+
+        try:
+            date_of_birth = date.fromisoformat(
+                date_of_birth_value
+            )
+
+            updated_student = Student(
+                id=student.id,
+                student_number=student_number,
+                first_name=first_name,
+                last_name=last_name,
+                date_of_birth=date_of_birth,
+                gender=gender,
+                program=program,
+                email=email,
+                phone=phone,
+                is_active=status == "Active",
+            )
+
+            student_controller.update_student(
+                updated_student
+            )
+
+            return redirect(
+                url_for(
+                    "students.view_student",
+                    student_id=student.id,
+                )
+            )
+
+        except (ValueError, TypeError) as error:
+            return render_template(
+                "students/edit.html",
+                student=student,
+                error=str(error),
+            )
+
+    return render_template(
+        "students/edit.html",
         student=student,
     )
