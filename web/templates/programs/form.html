@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% if program %}
+    {% set page_title = "Edit Academic Program" %}
+    {% set page_description = "Update the details of this academic program." %}
+    {% set submit_text = "Save Changes" %}
+{% else %}
+    {% set page_title = "Add Academic Program" %}
+    {% set page_description = "Register a new academic program in the system." %}
+    {% set submit_text = "Create Program" %}
+{% endif %}
+
+{% block title %}{{ page_title }} - IBS SMS{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>{{ page_title }}</h1>
+        <p class="page-subtitle">
+            {{ page_description }}
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('programs.list_programs') }}"
+        class="btn btn-light"
+    >
+        ← Back to Programs
+    </a>
+</div>
+
+<div class="card form-card">
+
+    <div class="card-header">
+        <div>
+            <h2>Program Information</h2>
+            <p>
+                Enter accurate academic information for this program.
+            </p>
+        </div>
+    </div>
+
+    {% if error %}
+        <div class="alert alert-danger">
+            <strong>Unable to save program.</strong>
+            <span>{{ error }}</span>
+        </div>
+    {% endif %}
+
+    <form
+        method="POST"
+        action="{% if program %}
+                    {{ url_for('programs.edit_program', program_id=program.id) }}
+                {% else %}
+                    {{ url_for('programs.create_program') }}
+                {% endif %}"
+    >
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label for="program_code">
+                    Program Code
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="program_code"
+                    name="program_code"
+                    class="form-control"
+                    value="{{ program.program_code if program else '' }}"
+                    placeholder="e.g. BIT"
+                    maxlength="50"
+                    required
+                    autofocus
+                >
+
+                <small class="form-help">
+                    Enter a unique code for the academic program.
+                </small>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="program_name">
+                    Program Name
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="program_name"
+                    name="program_name"
+                    class="form-control"
+                    value="{{ program.program_name if program else '' }}"
+                    placeholder="e.g. Bachelor of Information Technology"
+                    maxlength="200"
+                    required
+                >
+
+                <small class="form-help">
+                    Enter the official name of the academic program.
+                </small>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="qualification">
+                    Qualification
+                    <span class="required">*</span>
+                </label>
+
+                <select
+                    id="qualification"
+                    name="qualification"
+                    class="form-control"
+                    required
+                >
+
+                    <option value="">
+                        Select qualification
+                    </option>
+
+                    {% set current_qualification = program.qualification if program else '' %}
+
+                    <option
+                        value="Certificate"
+                        {% if current_qualification == "Certificate" %}selected{% endif %}
+                    >
+                        Certificate
+                    </option>
+
+                    <option
+                        value="Diploma"
+                        {% if current_qualification == "Diploma" %}selected{% endif %}
+                    >
+                        Diploma
+                    </option>
+
+                    <option
+                        value="Bachelor Degree"
+                        {% if current_qualification == "Bachelor Degree" %}selected{% endif %}
+                    >
+                        Bachelor Degree
+                    </option>
+
+                    <option
+                        value="Graduate Certificate"
+                        {% if current_qualification == "Graduate Certificate" %}selected{% endif %}
+                    >
+                        Graduate Certificate
+                    </option>
+
+                    <option
+                        value="Graduate Diploma"
+                        {% if current_qualification == "Graduate Diploma" %}selected{% endif %}
+                    >
+                        Graduate Diploma
+                    </option>
+
+                    <option
+                        value="Master Degree"
+                        {% if current_qualification == "Master Degree" %}selected{% endif %}
+                    >
+                        Master Degree
+                    </option>
+
+                    <option
+                        value="Doctoral Degree"
+                        {% if current_qualification == "Doctoral Degree" %}selected{% endif %}
+                    >
+                        Doctoral Degree
+                    </option>
+
+                </select>
+
+                <small class="form-help">
+                    Select the qualification level awarded by the program.
+                </small>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="duration_years">
+                    Duration
+                    <span class="required">*</span>
+                </label>
+
+                <div class="input-with-suffix">
+
+                    <input
+                        type="number"
+                        id="duration_years"
+                        name="duration_years"
+                        class="form-control"
+                        value="{{ program.duration_years if program else '' }}"
+                        placeholder="e.g. 4"
+                        min="1"
+                        max="10"
+                        required
+                    >
+
+                    <span class="input-suffix">
+                        years
+                    </span>
+
+                </div>
+
+                <small class="form-help">
+                    Enter the standard duration of the program in years.
+                </small>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="department_id">
+                    Department
+                    <span class="required">*</span>
+                </label>
+
+                <select
+                    id="department_id"
+                    name="department_id"
+                    class="form-control"
+                    required
+                >
+
+                    <option value="">
+                        Select department
+                    </option>
+
+                    {% for department in departments %}
+
+                        <option
+                            value="{{ department.id }}"
+                            {% if program and program.department_id == department.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ department.department_code }}
+                            - 
+                            {{ department.department_name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+                <small class="form-help">
+                    Every academic program must belong to a department.
+                </small>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="status">
+                    Status
+                </label>
+
+                {% set current_status = program.status if program else 'Active' %}
+
+                <select
+                    id="status"
+                    name="status"
+                    class="form-control"
+                >
+
+                    <option
+                        value="Active"
+                        {% if current_status == "Active" %}selected{% endif %}
+                    >
+                        Active
+                    </option>
+
+                    <option
+                        value="Inactive"
+                        {% if current_status == "Inactive" %}selected{% endif %}
+                    >
+                        Inactive
+                    </option>
+
+                </select>
+
+                <small class="form-help">
+                    Inactive programs remain in the system but cannot be offered.
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-group form-group-full">
+
+            <label for="description">
+                Description
+            </label>
+
+            <textarea
+                id="description"
+                name="description"
+                class="form-control"
+                rows="5"
+                maxlength="1000"
+                placeholder="Provide a short description of the academic program..."
+            >{{ program.description if program else '' }}</textarea>
+
+            <small class="form-help">
+                Optional. Describe the focus, purpose, or academic scope of the program.
+            </small>
+
+        </div>
+
+
+        <div class="form-actions">
+
+            <a
+                href="{{ url_for('programs.list_programs') }}"
+                class="btn btn-light"
+            >
+                Cancel
+            </a>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                {{ submit_text }}
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

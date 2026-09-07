@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+
+{% block title %}{{ program.program_name }} - IBS SMS{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1>{{ program.program_name }}</h1>
+
+        <p class="page-subtitle">
+            Academic Program Profile
+        </p>
+    </div>
+
+    <div class="page-header-actions">
+
+        <a
+            href="{{ url_for('programs.edit_program', program_id=program.id) }}"
+            class="btn btn-secondary"
+        >
+            Edit Program
+        </a>
+
+        <a
+            href="{{ url_for('programs.list_programs') }}"
+            class="btn btn-light"
+        >
+            ← Back to Programs
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="detail-grid">
+
+    <!-- Program Overview -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+                <h2>Program Overview</h2>
+                <p>
+                    Core academic information for this program.
+                </p>
+            </div>
+
+            {% if program.status == "Active" %}
+
+                <span class="status-badge status-active">
+                    Active
+                </span>
+
+            {% else %}
+
+                <span class="status-badge status-inactive">
+                    Inactive
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="detail-list">
+
+            <div class="detail-item">
+
+                <span class="detail-label">
+                    Program Code
+                </span>
+
+                <span class="detail-value">
+                    <span class="code-badge">
+                        {{ program.program_code }}
+                    </span>
+                </span>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <span class="detail-label">
+                    Program Name
+                </span>
+
+                <span class="detail-value">
+                    {{ program.program_name }}
+                </span>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <span class="detail-label">
+                    Qualification
+                </span>
+
+                <span class="detail-value">
+                    {{ program.qualification }}
+                </span>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <span class="detail-label">
+                    Duration
+                </span>
+
+                <span class="detail-value">
+                    {{ program.duration_years }}
+                    {% if program.duration_years == 1 %}
+                        year
+                    {% else %}
+                        years
+                    {% endif %}
+                </span>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <span class="detail-label">
+                    Status
+                </span>
+
+                <span class="detail-value">
+
+                    {% if program.status == "Active" %}
+
+                        <span class="status-badge status-active">
+                            Active
+                        </span>
+
+                    {% else %}
+
+                        <span class="status-badge status-inactive">
+                            Inactive
+                        </span>
+
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <span class="detail-label">
+                    Created
+                </span>
+
+                <span class="detail-value">
+                    {{ program.created_at or "Not available" }}
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Department -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+                <h2>Academic Department</h2>
+                <p>
+                    Department responsible for this program.
+                </p>
+            </div>
+
+        </div>
+
+
+        {% if department %}
+
+            <div class="department-profile">
+
+                <div class="department-code-large">
+                    {{ department.department_code }}
+                </div>
+
+                <div class="department-profile-info">
+
+                    <h3>
+                        {{ department.department_name }}
+                    </h3>
+
+                    {% if department.description %}
+
+                        <p>
+                            {{ department.description }}
+                        </p>
+
+                    {% endif %}
+
+                    <a
+                        href="{{ url_for(
+                            'departments.view_department',
+                            department_id=department.id
+                        ) }}"
+                        class="btn btn-small btn-light"
+                    >
+                        View Department
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state compact">
+
+                <h3>Department unavailable</h3>
+
+                <p>
+                    The department associated with this program
+                    could not be found.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Description -->
+
+    <div class="card detail-card-full">
+
+        <div class="card-header">
+
+            <div>
+                <h2>Program Description</h2>
+                <p>
+                    Academic focus and scope.
+                </p>
+            </div>
+
+        </div>
+
+
+        {% if program.description %}
+
+            <div class="description-content">
+
+                <p>
+                    {{ program.description }}
+                </p>
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state compact">
+
+                <h3>No description provided</h3>
+
+                <p>
+                    A description has not been added for this program.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Administrative Actions -->
+
+    <div class="card detail-card-full">
+
+        <div class="card-header">
+
+            <div>
+                <h2>Administrative Actions</h2>
+                <p>
+                    Manage the status and lifecycle of this program.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="admin-actions">
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'programs.toggle_program_status',
+                    program_id=program.id
+                ) }}"
+            >
+
+                <button
+                    type="submit"
+                    class="btn btn-warning"
+                >
+                    {% if program.status == "Active" %}
+                        Deactivate Program
+                    {% else %}
+                        Activate Program
+                    {% endif %}
+                </button>
+
+            </form>
+
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'programs.delete_program',
+                    program_id=program.id
+                ) }}"
+                onsubmit="return confirm(
+                    'Are you sure you want to permanently delete this academic program?'
+                );"
+            >
+
+                <button
+                    type="submit"
+                    class="btn btn-danger"
+                >
+                    Delete Program
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

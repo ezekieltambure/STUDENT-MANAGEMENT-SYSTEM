@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}Academic Programs - IBS SMS{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>Academic Programs</h1>
+        <p class="page-subtitle">
+            Manage academic programs offered by IBS University departments.
+        </p>
+    </div>
+
+    <a href="{{ url_for('programs.create_program') }}" class="btn btn-primary">
+        + Add Program
+    </a>
+</div>
+
+<div class="card">
+
+    <div class="card-header">
+        <div>
+            <h2>Program Directory</h2>
+            <p>
+                Search and manage academic programs across all departments.
+            </p>
+        </div>
+    </div>
+
+    <form method="GET" action="{{ url_for('programs.list_programs') }}" class="search-form">
+        <div class="search-group">
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                placeholder="Search by code, name, qualification, or description..."
+                class="form-control"
+            >
+
+            <button type="submit" class="btn btn-secondary">
+                Search
+            </button>
+
+            {% if query %}
+                <a
+                    href="{{ url_for('programs.list_programs') }}"
+                    class="btn btn-light"
+                >
+                    Clear
+                </a>
+            {% endif %}
+        </div>
+    </form>
+
+    {% if programs %}
+
+        <div class="table-responsive">
+            <table class="data-table">
+
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Program</th>
+                        <th>Qualification</th>
+                        <th>Duration</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th class="actions-column">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for program in programs %}
+
+                        {% set department = departments.get(program.department_id) %}
+
+                        <tr>
+
+                            <td>
+                                <span class="code-badge">
+                                    {{ program.program_code }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="table-primary-text">
+                                    {{ program.program_name }}
+                                </div>
+
+                                {% if program.description %}
+                                    <div class="table-secondary-text">
+                                        {{ program.description }}
+                                    </div>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ program.qualification }}
+                            </td>
+
+                            <td>
+                                {{ program.duration_years }}
+                                {% if program.duration_years == 1 %}
+                                    year
+                                {% else %}
+                                    years
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if department %}
+                                    <div class="table-primary-text">
+                                        {{ department.department_name }}
+                                    </div>
+
+                                    <div class="table-secondary-text">
+                                        Code: {{ department.department_code }}
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">
+                                        Department unavailable
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if program.status == "Active" %}
+                                    <span class="status-badge status-active">
+                                        Active
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge status-inactive">
+                                        Inactive
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td class="actions-column">
+
+                                <div class="action-buttons">
+
+                                    <a
+                                        href="{{ url_for(
+                                            'programs.view_program',
+                                            program_id=program.id
+                                        ) }}"
+                                        class="btn btn-small btn-light"
+                                    >
+                                        View
+                                    </a>
+
+                                    <a
+                                        href="{{ url_for(
+                                            'programs.edit_program',
+                                            program_id=program.id
+                                        ) }}"
+                                        class="btn btn-small btn-secondary"
+                                    >
+                                        Edit
+                                    </a>
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'programs.toggle_program_status',
+                                            program_id=program.id
+                                        ) }}"
+                                        class="inline-form"
+                                    >
+                                        <button
+                                            type="submit"
+                                            class="btn btn-small btn-warning"
+                                        >
+                                            {% if program.status == "Active" %}
+                                                Deactivate
+                                            {% else %}
+                                                Activate
+                                            {% endif %}
+                                        </button>
+                                    </form>
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'programs.delete_program',
+                                            program_id=program.id
+                                        ) }}"
+                                        class="inline-form"
+                                        onsubmit="return confirm(
+                                            'Are you sure you want to delete this academic program?'
+                                        );"
+                                    >
+                                        <button
+                                            type="submit"
+                                            class="btn btn-small btn-danger"
+                                        >
+                                            Delete
+                                        </button>
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+        </div>
+
+        <div class="table-footer">
+            <span>
+                Showing {{ programs|length }} program{% if programs|length != 1 %}s{% endif %}
+                {% if query %}
+                    matching "<strong>{{ query }}</strong>"
+                {% endif %}
+            </span>
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            {% if query %}
+
+                <div class="empty-state-icon">
+                    🔎
+                </div>
+
+                <h3>No programs found</h3>
+
+                <p>
+                    No academic programs matched your search for
+                    <strong>"{{ query }}"</strong>.
+                </p>
+
+                <a
+                    href="{{ url_for('programs.list_programs') }}"
+                    class="btn btn-secondary"
+                >
+                    Clear Search
+                </a>
+
+            {% else %}
+
+                <div class="empty-state-icon">
+                    🎓
+                </div>
+
+                <h3>No academic programs yet</h3>
+
+                <p>
+                    There are currently no academic programs registered
+                    in the system.
+                </p>
+
+                <a
+                    href="{{ url_for('programs.create_program') }}"
+                    class="btn btn-primary"
+                >
+                    + Add First Program
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
