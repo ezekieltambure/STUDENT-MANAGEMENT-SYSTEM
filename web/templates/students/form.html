@@ -3,161 +3,286 @@
 {% block title %}Add Student | IBS Student Management System{% endblock %}
 
 {% block content %}
+<div class="student-form-page">
 
-<div class="page-header">
-    <div>
-        <h2>Add Student</h2>
-        <p>Register a new student in the IBS Student Management System.</p>
+    <div class="page-header student-form-header">
+        <div>
+            <p class="eyebrow">STUDENT MANAGEMENT</p>
+            <h2>Add Student</h2>
+            <p>Register a new student in the IBS Student Management System.</p>
+        </div>
+
+        <a
+            href="{{ url_for('students.list_students') }}"
+            class="btn btn-secondary"
+        >
+            Back to Students
+        </a>
     </div>
 
-    <a href="{{ url_for('students.list_students') }}" class="btn btn-secondary">
-        ← Back to Students
-    </a>
-</div>
-
-<div class="card form-card">
-
     {% if error %}
-    <div class="alert alert-danger">
-        {{ error }}
+    <div class="alert alert-danger form-alert">
+        <strong>Unable to register student</strong>
+        <span>{{ error }}</span>
     </div>
     {% endif %}
 
-    <form method="POST">
+    <form method="POST" class="student-registration-form">
 
-        <div class="form-grid">
+        <section class="card registration-card">
 
-            <div class="form-group">
-                <label for="student_number">Student Number</label>
-                <input
-                    type="text"
-                    id="student_number"
-                    name="student_number"
-                    class="form-control"
-                    placeholder="e.g. IBS2026001"
-                    value="{{ request.form.get('student_number', '') }}"
-                    required
-                >
+            <div class="registration-section-header">
+                <div class="registration-icon">P</div>
+
+                <div>
+                    <p class="eyebrow">SECTION 01</p>
+                    <h3>Personal Information</h3>
+                    <p>Enter the student's basic personal details.</p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="first_name">First Name</label>
-                <input
-                    type="text"
-                    id="first_name"
-                    name="first_name"
-                    class="form-control"
-                    placeholder="Enter first name"
-                    value="{{ request.form.get('first_name', '') }}"
-                    required
-                >
+            <div class="registration-grid">
+
+                <div class="form-group">
+                    <label for="first_name">
+                        First Name
+                        <span class="required-mark">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="first_name"
+                        name="first_name"
+                        class="form-control"
+                        value="{{ request.form.get('first_name', '') }}"
+                        placeholder="Enter first name"
+                        required
+                        autocomplete="given-name"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="last_name">
+                        Last Name
+                        <span class="required-mark">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="last_name"
+                        name="last_name"
+                        class="form-control"
+                        value="{{ request.form.get('last_name', '') }}"
+                        placeholder="Enter last name"
+                        required
+                        autocomplete="family-name"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="date_of_birth">
+                        Date of Birth
+                        <span class="required-mark">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="date_of_birth"
+                        name="date_of_birth"
+                        class="form-control"
+                        value="{{ request.form.get('date_of_birth', '') }}"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">
+                        Gender
+                        <span class="required-mark">*</span>
+                    </label>
+
+                    <select
+                        id="gender"
+                        name="gender"
+                        class="form-control"
+                        required
+                    >
+                        <option value="">Select gender</option>
+
+                        <option
+                            value="Male"
+                            {% if request.form.get('gender') == 'Male' %}selected{% endif %}
+                        >
+                            Male
+                        </option>
+
+                        <option
+                            value="Female"
+                            {% if request.form.get('gender') == 'Female' %}selected{% endif %}
+                        >
+                            Female
+                        </option>
+
+                        <option
+                            value="Other"
+                            {% if request.form.get('gender') == 'Other' %}selected{% endif %}
+                        >
+                            Other
+                        </option>
+                    </select>
+                </div>
+
             </div>
 
-            <div class="form-group">
-                <label for="last_name">Last Name</label>
-                <input
-                    type="text"
-                    id="last_name"
-                    name="last_name"
-                    class="form-control"
-                    placeholder="Enter last name"
-                    value="{{ request.form.get('last_name', '') }}"
-                    required
-                >
+        </section>
+
+        <section class="card registration-card">
+
+            <div class="registration-section-header">
+                <div class="registration-icon">A</div>
+
+                <div>
+                    <p class="eyebrow">SECTION 02</p>
+                    <h3>Academic Information</h3>
+                    <p>Enter the student's university identification and program.</p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="date_of_birth">Date of Birth</label>
-                <input
-                    type="date"
-                    id="date_of_birth"
-                    name="date_of_birth"
-                    class="form-control"
-                    value="{{ request.form.get('date_of_birth', '') }}"
-                    required
-                >
+            <div class="registration-grid">
+
+                <div class="form-group">
+                    <label for="student_number">
+                        Student Number
+                        <span class="required-mark">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="student_number"
+                        name="student_number"
+                        class="form-control"
+                        value="{{ request.form.get('student_number', '') }}"
+                        placeholder="e.g. ST250283"
+                        required
+                        autocomplete="off"
+                    >
+
+                    <small class="field-help">
+                        Enter the unique student identification number.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="program">
+                        Program
+                        <span class="required-mark">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="program"
+                        name="program"
+                        class="form-control"
+                        value="{{ request.form.get('program', '') }}"
+                        placeholder="e.g. BACHELOR OF INFORMATION TECHNOLOGY"
+                        required
+                    >
+
+                    <small class="field-help">
+                        Enter the student's current academic program.
+                    </small>
+                </div>
+
             </div>
 
-            <div class="form-group">
-                <label for="gender">Gender</label>
-                <select
-                    id="gender"
-                    name="gender"
-                    class="form-control"
-                    required
-                >
-                    <option value="">Select gender</option>
-                    <option value="Male"
-                        {% if request.form.get('gender') == 'Male' %}selected{% endif %}>
-                        Male
-                    </option>
-                    <option value="Female"
-                        {% if request.form.get('gender') == 'Female' %}selected{% endif %}>
-                        Female
-                    </option>
-                    <option value="Other"
-                        {% if request.form.get('gender') == 'Other' %}selected{% endif %}>
-                        Other
-                    </option>
-                </select>
+        </section>
+
+        <section class="card registration-card">
+
+            <div class="registration-section-header">
+                <div class="registration-icon">C</div>
+
+                <div>
+                    <p class="eyebrow">SECTION 03</p>
+                    <h3>Contact Information</h3>
+                    <p>Provide reliable contact information for the student.</p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="program">Program</label>
-                <input
-                    type="text"
-                    id="program"
-                    name="program"
-                    class="form-control"
-                    placeholder="e.g. Bachelor of Information Technology"
-                    value="{{ request.form.get('program', '') }}"
-                    required
-                >
+            <div class="registration-grid">
+
+                <div class="form-group">
+                    <label for="email">
+                        Email Address
+                        <span class="required-mark">*</span>
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="form-control"
+                        value="{{ request.form.get('email', '') }}"
+                        placeholder="student@example.com"
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">
+                        Phone Number
+                        <span class="required-mark">*</span>
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        class="form-control"
+                        value="{{ request.form.get('phone', '') }}"
+                        placeholder="e.g. 675XXXXXXXX"
+                        required
+                        autocomplete="tel"
+                    >
+                </div>
+
             </div>
 
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    class="form-control"
-                    placeholder="student@example.com"
-                    value="{{ request.form.get('email', '') }}"
-                    required
-                >
+        </section>
+
+        <section class="card registration-actions-card">
+
+            <div>
+                <p class="eyebrow">FINAL STEP</p>
+                <h3>Complete Registration</h3>
+                <p>
+                    Review the information above before registering the student.
+                    Required fields are marked with an asterisk.
+                </p>
             </div>
 
-            <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    class="form-control"
-                    placeholder="Enter phone number"
-                    value="{{ request.form.get('phone', '') }}"
-                    required
+            <div class="registration-actions">
+
+                <a
+                    href="{{ url_for('students.list_students') }}"
+                    class="btn btn-secondary"
                 >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary registration-submit"
+                >
+                    Register Student
+                </button>
+
             </div>
 
-        </div>
-
-        <div class="form-actions">
-            <a
-                href="{{ url_for('students.list_students') }}"
-                class="btn btn-secondary"
-            >
-                Cancel
-            </a>
-
-            <button type="submit" class="btn btn-primary">
-                Save Student
-            </button>
-        </div>
+        </section>
 
     </form>
 
 </div>
-
 {% endblock %}
