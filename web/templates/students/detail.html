@@ -3,235 +3,220 @@
 {% block title %}Student Details | IBS Student Management System{% endblock %}
 
 {% block content %}
+<div class="student-detail-page">
 
-<div class="page-header">
-    <div>
-        <h2>Student Details</h2>
-        <p>View complete information for the selected student.</p>
-    </div>
-
-    <a
-        href="{{ url_for('students.list_students') }}"
-        class="btn btn-secondary"
-    >
-        ← Back to Students
-    </a>
-</div>
-
-{% if student %}
-
-<div class="card student-detail-card">
-
-    <div class="student-detail-header">
-
+    <div class="page-header detail-page-header">
         <div>
-            <span class="detail-label">Student Number</span>
-            <h3>{{ student.student_number }}</h3>
+            <p class="eyebrow">STUDENT RECORD</p>
+            <h2>Student Details</h2>
+            <p>View and manage the complete student record.</p>
         </div>
 
-        {% if student.is_active %}
-
-            <span class="status-badge status-active">
-                Active
-            </span>
-
-        {% else %}
-
-            <span class="status-badge status-inactive">
-                Inactive
-            </span>
-
-        {% endif %}
-
-    </div>
-
-
-    <div class="detail-section">
-
-        <h3>Personal Information</h3>
-
-        <div class="detail-grid">
-
-            <div class="detail-item">
-                <span class="detail-label">First Name</span>
-                <span class="detail-value">
-                    {{ student.first_name }}
-                </span>
-            </div>
-
-            <div class="detail-item">
-                <span class="detail-label">Last Name</span>
-                <span class="detail-value">
-                    {{ student.last_name }}
-                </span>
-            </div>
-
-            <div class="detail-item">
-                <span class="detail-label">Full Name</span>
-                <span class="detail-value">
-                    {{ student.full_name }}
-                </span>
-            </div>
-
-            <div class="detail-item">
-                <span class="detail-label">Date of Birth</span>
-                <span class="detail-value">
-                    {{ student.date_of_birth.strftime('%d %B %Y') }}
-                </span>
-            </div>
-
-            <div class="detail-item">
-                <span class="detail-label">Gender</span>
-                <span class="detail-value">
-                    {{ student.gender }}
-                </span>
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="detail-section">
-
-        <h3>Academic Information</h3>
-
-        <div class="detail-grid">
-
-            <div class="detail-item">
-                <span class="detail-label">Program</span>
-                <span class="detail-value">
-                    {{ student.program }}
-                </span>
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="detail-section">
-
-        <h3>Contact Information</h3>
-
-        <div class="detail-grid">
-
-            <div class="detail-item">
-                <span class="detail-label">Email Address</span>
-                <span class="detail-value">
-                    {{ student.email }}
-                </span>
-            </div>
-
-            <div class="detail-item">
-                <span class="detail-label">Phone Number</span>
-                <span class="detail-value">
-                    {{ student.phone }}
-                </span>
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="detail-actions">
-
-        <a
-            href="{{ url_for('students.list_students') }}"
-            class="btn btn-secondary"
-        >
-            Back to Students
-        </a>
-
-
-        <a
-            href="{{ url_for(
-                'students.edit_student',
-                student_id=student.id
-            ) }}"
-            class="btn btn-primary"
-        >
-            Edit Student
-        </a>
-
-
-        {% if student.is_active %}
-
-        <form
-            method="POST"
-            action="{{ url_for(
-                'students.deactivate_student',
-                student_id=student.id
-            ) }}"
-            style="display: inline;"
-            onsubmit="return confirm(
-                'Are you sure you want to deactivate this student?'
-            );"
-        >
-
-            <button
-                type="submit"
+        <div class="detail-header-actions">
+            <a
+                href="{{ url_for('students.list_students') }}"
                 class="btn btn-secondary"
             >
-                Deactivate Student
-            </button>
+                Back to Students
+            </a>
 
-        </form>
-
-        {% else %}
-
-        <form
-            method="POST"
-            action="{{ url_for(
-                'students.activate_student',
-                student_id=student.id
-            ) }}"
-            style="display: inline;"
-            onsubmit="return confirm(
-                'Are you sure you want to reactivate this student?'
-            );"
-        >
-
-            <button
-                type="submit"
+            <a
+                href="{{ url_for('students.edit_student', student_id=student.id) }}"
                 class="btn btn-primary"
             >
-                Reactivate Student
-            </button>
+                Edit Student
+            </a>
+        </div>
+    </div>
 
-        </form>
+    <section class="student-profile-card card">
 
-        {% endif %}
+        <div class="student-profile-main">
+
+            <div class="student-profile-avatar">
+                {{ student.first_name[0]|upper }}{{ student.last_name[0]|upper }}
+            </div>
+
+            <div class="student-profile-info">
+                <p class="profile-label">STUDENT</p>
+
+                <h3>{{ student.full_name }}</h3>
+
+                <p class="profile-student-number">
+                    {{ student.student_number }}
+                </p>
+            </div>
+
+        </div>
+
+        <div class="student-profile-status">
+            {% if student.is_active %}
+                <span class="status-badge status-active">
+                    <span class="status-dot-small"></span>
+                    Active
+                </span>
+            {% else %}
+                <span class="status-badge status-inactive">
+                    <span class="status-dot-small"></span>
+                    Inactive
+                </span>
+            {% endif %}
+        </div>
+
+    </section>
+
+    <div class="student-detail-grid">
+
+        <section class="card detail-card">
+
+            <div class="detail-card-header">
+                <div class="detail-section-icon">P</div>
+
+                <div>
+                    <h3>Personal Information</h3>
+                    <p>Basic information about the student.</p>
+                </div>
+            </div>
+
+            <div class="detail-information-grid">
+
+                <div class="detail-item">
+                    <span class="detail-label">First Name</span>
+                    <span class="detail-value">{{ student.first_name }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Last Name</span>
+                    <span class="detail-value">{{ student.last_name }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Date of Birth</span>
+                    <span class="detail-value">{{ student.date_of_birth }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Gender</span>
+                    <span class="detail-value">{{ student.gender }}</span>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="card detail-card">
+
+            <div class="detail-card-header">
+                <div class="detail-section-icon">C</div>
+
+                <div>
+                    <h3>Contact Information</h3>
+                    <p>Student contact details.</p>
+                </div>
+            </div>
+
+            <div class="detail-information-grid">
+
+                <div class="detail-item detail-item-wide">
+                    <span class="detail-label">Email Address</span>
+                    <span class="detail-value">{{ student.email }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Phone Number</span>
+                    <span class="detail-value">{{ student.phone }}</span>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="card detail-card academic-detail-card">
+
+            <div class="detail-card-header">
+                <div class="detail-section-icon">A</div>
+
+                <div>
+                    <h3>Academic Information</h3>
+                    <p>Current program and student identification.</p>
+                </div>
+            </div>
+
+            <div class="detail-information-grid">
+
+                <div class="detail-item">
+                    <span class="detail-label">Student Number</span>
+                    <span class="detail-value">{{ student.student_number }}</span>
+                </div>
+
+                <div class="detail-item detail-item-wide">
+                    <span class="detail-label">Program</span>
+                    <span class="detail-value">{{ student.program }}</span>
+                </div>
+
+            </div>
+
+        </section>
 
     </div>
 
+    <section class="card student-management-card">
+
+        <div>
+            <p class="eyebrow">RECORD MANAGEMENT</p>
+
+            <h3>Manage Student Status</h3>
+
+            <p>
+                {% if student.is_active %}
+                    This student is currently active in the system.
+                    Deactivating the record will mark the student as inactive
+                    without permanently removing the record.
+                {% else %}
+                    This student is currently inactive.
+                    Activating the record will return the student to active status.
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="management-actions">
+
+            <a
+                href="{{ url_for('students.edit_student', student_id=student.id) }}"
+                class="btn btn-secondary"
+            >
+                Edit Record
+            </a>
+
+            {% if student.is_active %}
+
+            <form
+                method="POST"
+                action="{{ url_for('students.deactivate_student', student_id=student.id) }}"
+                onsubmit="return confirm('Are you sure you want to deactivate this student?');"
+            >
+                <button type="submit" class="btn btn-danger">
+                    Deactivate Student
+                </button>
+            </form>
+
+            {% else %}
+
+            <form
+                method="POST"
+                action="{{ url_for('students.activate_student', student_id=student.id) }}"
+                onsubmit="return confirm('Are you sure you want to activate this student?');"
+            >
+                <button type="submit" class="btn btn-success">
+                    Activate Student
+                </button>
+            </form>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
 </div>
-
-{% else %}
-
-<div class="card">
-
-    <div class="empty-state">
-
-        <h3>Student Not Found</h3>
-
-        <p>
-            {{ error or "The requested student could not be found." }}
-        </p>
-
-        <a
-            href="{{ url_for('students.list_students') }}"
-            class="btn btn-primary"
-            style="width: auto;"
-        >
-            Return to Students
-        </a>
-
-    </div>
-
-</div>
-
-{% endif %}
-
 {% endblock %}
