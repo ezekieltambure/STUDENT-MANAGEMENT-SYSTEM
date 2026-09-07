@@ -37,6 +37,11 @@ class StudentController:
             student_number
         )
 
+    def find_all(self) -> list[Student]:
+        """Return all students."""
+
+        return self.student_service.find_all()
+
     def exists_by_student_number(self, student_number: str) -> bool:
         """Check whether a student number exists."""
 

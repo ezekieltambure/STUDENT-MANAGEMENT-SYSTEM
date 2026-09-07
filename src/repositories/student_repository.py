@@ -132,6 +132,42 @@ class StudentRepository:
         finally:
             connection.close()
 
+    def find_all(self) -> list[Student]:
+        """Return all students ordered by last name and first name."""
+
+        connection = get_connection()
+
+        try:
+            cursor = connection.cursor()
+
+            cursor.execute(
+                """
+                SELECT
+                    student_id,
+                    student_number,
+                    first_name,
+                    last_name,
+                    date_of_birth,
+                    gender,
+                    program,
+                    email,
+                    phone,
+                    status
+                FROM students
+                ORDER BY last_name ASC, first_name ASC
+                """
+            )
+
+            rows = cursor.fetchall()
+
+            return [
+                self._row_to_student(row)
+                for row in rows
+            ]
+
+        finally:
+            connection.close()
+
     def exists_by_student_number(self, student_number: str) -> bool:
         """Check whether a student number exists."""
 
