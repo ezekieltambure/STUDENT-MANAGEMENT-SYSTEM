@@ -50,7 +50,10 @@ class StudentService:
 
         return self.student_repository.find_all()
 
-    def exists_by_student_number(self, student_number: str) -> bool:
+    def exists_by_student_number(
+        self,
+        student_number: str,
+    ) -> bool:
         """Check whether a student number already exists."""
 
         if not student_number.strip():
@@ -66,8 +69,10 @@ class StudentService:
         if student.id is None:
             raise ValueError("Student ID is required for update.")
 
-        existing_student = self.student_repository.find_by_student_number(
-            student.student_number
+        existing_student = (
+            self.student_repository.find_by_student_number(
+                student.student_number
+            )
         )
 
         if (
@@ -75,6 +80,36 @@ class StudentService:
             and existing_student.id != student.id
         ):
             raise ValueError("Student number already exists.")
+
+        return self.student_repository.update(student)
+
+    def deactivate_student(self, student_id: int) -> Student:
+        """Deactivate an existing student."""
+
+        student = self.student_repository.find_by_id(student_id)
+
+        if student is None:
+            raise ValueError("Student not found.")
+
+        if not student.is_active:
+            raise ValueError("Student is already inactive.")
+
+        student.deactivate()
+
+        return self.student_repository.update(student)
+
+    def activate_student(self, student_id: int) -> Student:
+        """Activate an existing student."""
+
+        student = self.student_repository.find_by_id(student_id)
+
+        if student is None:
+            raise ValueError("Student not found.")
+
+        if student.is_active:
+            raise ValueError("Student is already active.")
+
+        student.activate()
 
         return self.student_repository.update(student)
 

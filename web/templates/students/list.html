@@ -25,6 +25,7 @@
 
     <div style="overflow-x: auto;">
         <table class="data-table">
+
             <thead>
                 <tr>
                     <th>ID</th>
@@ -39,12 +40,17 @@
             </thead>
 
             <tbody>
+
                 {% for student in students %}
+
                 <tr>
+
                     <td>{{ student.id }}</td>
 
                     <td>
-                        <strong>{{ student.student_number }}</strong>
+                        <strong>
+                            {{ student.student_number }}
+                        </strong>
                     </td>
 
                     <td>{{ student.full_name }}</td>
@@ -57,37 +63,128 @@
 
                     <td>
                         {% if student.is_active %}
+
                             <span class="status-badge status-active">
                                 Active
                             </span>
+
                         {% else %}
+
                             <span class="status-badge status-inactive">
                                 Inactive
                             </span>
+
                         {% endif %}
                     </td>
 
                     <td>
+
                         <a
-                            href="{{ url_for('students.view_student', student_id=student.id) }}"
+                            href="{{ url_for(
+                                'students.view_student',
+                                student_id=student.id
+                            ) }}"
                             class="action-link"
                         >
                             View
                         </a>
+
+                        <span style="margin: 0 6px; color: #999;">
+                            |
+                        </span>
+
+                        <a
+                            href="{{ url_for(
+                                'students.edit_student',
+                                student_id=student.id
+                            ) }}"
+                            class="action-link"
+                        >
+                            Edit
+                        </a>
+
+                        <span style="margin: 0 6px; color: #999;">
+                            |
+                        </span>
+
+                        {% if student.is_active %}
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'students.deactivate_student',
+                                student_id=student.id
+                            ) }}"
+                            style="display: inline;"
+                            onsubmit="return confirm(
+                                'Are you sure you want to deactivate this student?'
+                            );"
+                        >
+                            <button
+                                type="submit"
+                                class="action-link"
+                                style="
+                                    border: none;
+                                    background: none;
+                                    padding: 0;
+                                    cursor: pointer;
+                                    font: inherit;
+                                "
+                            >
+                                Deactivate
+                            </button>
+                        </form>
+
+                        {% else %}
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'students.activate_student',
+                                student_id=student.id
+                            ) }}"
+                            style="display: inline;"
+                            onsubmit="return confirm(
+                                'Are you sure you want to reactivate this student?'
+                            );"
+                        >
+                            <button
+                                type="submit"
+                                class="action-link"
+                                style="
+                                    border: none;
+                                    background: none;
+                                    padding: 0;
+                                    cursor: pointer;
+                                    font: inherit;
+                                "
+                            >
+                                Reactivate
+                            </button>
+                        </form>
+
+                        {% endif %}
+
                     </td>
+
                 </tr>
+
                 {% endfor %}
+
             </tbody>
+
         </table>
     </div>
 
     {% else %}
 
     <div class="empty-state">
+
         <h3>No Students Found</h3>
 
         <p>
-            There are currently no students registered in the system.
+            There are currently no students registered
+            in the system.
         </p>
 
         <a
@@ -97,6 +194,7 @@
         >
             Add First Student
         </a>
+
     </div>
 
     {% endif %}

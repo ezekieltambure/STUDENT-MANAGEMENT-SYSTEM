@@ -22,12 +22,23 @@ student_bp = Blueprint(
 student_controller = StudentController()
 
 
+def _require_login():
+    """Redirect unauthenticated users to the login page."""
+
+    if "user_id" not in session:
+        return redirect(url_for("home"))
+
+    return None
+
+
 @student_bp.route("/")
 def list_students():
     """Display all students."""
 
-    if "user_id" not in session:
-        return redirect(url_for("home"))
+    login_redirect = _require_login()
+
+    if login_redirect:
+        return login_redirect
 
     students = student_controller.find_all()
 
@@ -41,40 +52,50 @@ def list_students():
 def create_student():
     """Display and process the add student form."""
 
-    if "user_id" not in session:
-        return redirect(url_for("home"))
+    login_redirect = _require_login()
+
+    if login_redirect:
+        return login_redirect
 
     if request.method == "POST":
         student_number = request.form.get(
-            "student_number", ""
+            "student_number",
+            "",
         ).strip()
 
         first_name = request.form.get(
-            "first_name", ""
+            "first_name",
+            "",
         ).strip()
 
         last_name = request.form.get(
-            "last_name", ""
+            "last_name",
+            "",
         ).strip()
 
         date_of_birth_value = request.form.get(
-            "date_of_birth", ""
+            "date_of_birth",
+            "",
         ).strip()
 
         gender = request.form.get(
-            "gender", ""
+            "gender",
+            "",
         ).strip()
 
         program = request.form.get(
-            "program", ""
+            "program",
+            "",
         ).strip()
 
         email = request.form.get(
-            "email", ""
+            "email",
+            "",
         ).strip()
 
         phone = request.form.get(
-            "phone", ""
+            "phone",
+            "",
         ).strip()
 
         try:
@@ -114,8 +135,10 @@ def create_student():
 def view_student(student_id: int):
     """Display detailed information about a student."""
 
-    if "user_id" not in session:
-        return redirect(url_for("home"))
+    login_redirect = _require_login()
+
+    if login_redirect:
+        return login_redirect
 
     student = student_controller.find_by_id(student_id)
 
@@ -139,8 +162,10 @@ def view_student(student_id: int):
 def edit_student(student_id: int):
     """Display and process the edit student form."""
 
-    if "user_id" not in session:
-        return redirect(url_for("home"))
+    login_redirect = _require_login()
+
+    if login_redirect:
+        return login_redirect
 
     student = student_controller.find_by_id(student_id)
 
@@ -153,39 +178,48 @@ def edit_student(student_id: int):
 
     if request.method == "POST":
         student_number = request.form.get(
-            "student_number", ""
+            "student_number",
+            "",
         ).strip()
 
         first_name = request.form.get(
-            "first_name", ""
+            "first_name",
+            "",
         ).strip()
 
         last_name = request.form.get(
-            "last_name", ""
+            "last_name",
+            "",
         ).strip()
 
         date_of_birth_value = request.form.get(
-            "date_of_birth", ""
+            "date_of_birth",
+            "",
         ).strip()
 
         gender = request.form.get(
-            "gender", ""
+            "gender",
+            "",
         ).strip()
 
         program = request.form.get(
-            "program", ""
+            "program",
+            "",
         ).strip()
 
         email = request.form.get(
-            "email", ""
+            "email",
+            "",
         ).strip()
 
         phone = request.form.get(
-            "phone", ""
+            "phone",
+            "",
         ).strip()
 
         status = request.form.get(
-            "status", ""
+            "status",
+            "",
         ).strip()
 
         try:
@@ -228,3 +262,67 @@ def edit_student(student_id: int):
         "students/edit.html",
         student=student,
     )
+
+
+@student_bp.route(
+    "/<int:student_id>/deactivate",
+    methods=["POST"],
+)
+def deactivate_student(student_id: int):
+    """Deactivate a student."""
+
+    login_redirect = _require_login()
+
+    if login_redirect:
+        return login_redirect
+
+    try:
+        student_controller.deactivate_student(
+            student_id
+        )
+
+        return redirect(
+            url_for(
+                "students.view_student",
+                student_id=student_id,
+            )
+        )
+
+    except ValueError as error:
+        return render_template(
+            "students/detail.html",
+            student=None,
+            error=str(error),
+        ), 404
+
+
+@student_bp.route(
+    "/<int:student_id>/activate",
+    methods=["POST"],
+)
+def activate_student(student_id: int):
+    """Activate a student."""
+
+    login_redirect = _require_login()
+
+    if login_redirect:
+        return login_redirect
+
+    try:
+        student_controller.activate_student(
+            student_id
+        )
+
+        return redirect(
+            url_for(
+                "students.view_student",
+                student_id=student_id,
+            )
+        )
+
+    except ValueError as error:
+        return render_template(
+            "students/detail.html",
+            student=None,
+            error=str(error),
+        ), 404

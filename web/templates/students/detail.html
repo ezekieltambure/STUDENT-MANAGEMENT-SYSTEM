@@ -23,23 +23,31 @@
 <div class="card student-detail-card">
 
     <div class="student-detail-header">
+
         <div>
             <span class="detail-label">Student Number</span>
             <h3>{{ student.student_number }}</h3>
         </div>
 
         {% if student.is_active %}
+
             <span class="status-badge status-active">
                 Active
             </span>
+
         {% else %}
+
             <span class="status-badge status-inactive">
                 Inactive
             </span>
+
         {% endif %}
+
     </div>
 
+
     <div class="detail-section">
+
         <h3>Personal Information</h3>
 
         <div class="detail-grid">
@@ -80,9 +88,12 @@
             </div>
 
         </div>
+
     </div>
 
+
     <div class="detail-section">
+
         <h3>Academic Information</h3>
 
         <div class="detail-grid">
@@ -95,9 +106,12 @@
             </div>
 
         </div>
+
     </div>
 
+
     <div class="detail-section">
+
         <h3>Contact Information</h3>
 
         <div class="detail-grid">
@@ -117,7 +131,9 @@
             </div>
 
         </div>
+
     </div>
+
 
     <div class="detail-actions">
 
@@ -128,12 +144,65 @@
             Back to Students
         </a>
 
+
         <a
-            href="{{ url_for('students.edit_student', student_id=student.id) }}"
+            href="{{ url_for(
+                'students.edit_student',
+                student_id=student.id
+            ) }}"
             class="btn btn-primary"
         >
             Edit Student
         </a>
+
+
+        {% if student.is_active %}
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'students.deactivate_student',
+                student_id=student.id
+            ) }}"
+            style="display: inline;"
+            onsubmit="return confirm(
+                'Are you sure you want to deactivate this student?'
+            );"
+        >
+
+            <button
+                type="submit"
+                class="btn btn-secondary"
+            >
+                Deactivate Student
+            </button>
+
+        </form>
+
+        {% else %}
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'students.activate_student',
+                student_id=student.id
+            ) }}"
+            style="display: inline;"
+            onsubmit="return confirm(
+                'Are you sure you want to reactivate this student?'
+            );"
+        >
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Reactivate Student
+            </button>
+
+        </form>
+
+        {% endif %}
 
     </div>
 

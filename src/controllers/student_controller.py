@@ -42,7 +42,10 @@ class StudentController:
 
         return self.student_service.find_all()
 
-    def exists_by_student_number(self, student_number: str) -> bool:
+    def exists_by_student_number(
+        self,
+        student_number: str,
+    ) -> bool:
         """Check whether a student number exists."""
 
         return self.student_service.exists_by_student_number(
@@ -54,7 +57,23 @@ class StudentController:
 
         return self.student_service.update_student(student)
 
+    def deactivate_student(self, student_id: int) -> Student:
+        """Deactivate a student."""
+
+        return self.student_service.deactivate_student(
+            student_id
+        )
+
+    def activate_student(self, student_id: int) -> Student:
+        """Activate a student."""
+
+        return self.student_service.activate_student(
+            student_id
+        )
+
     def delete_student(self, student_id: int) -> bool:
         """Delete a student by database ID."""
 
-        return self.student_service.delete_student(student_id)
+        return self.student_service.delete_student(
+            student_id
+        )
