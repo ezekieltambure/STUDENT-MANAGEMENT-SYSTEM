@@ -50,6 +50,18 @@ class StudentService:
             student_number
         )
 
+    def search_students(
+        self,
+        search_term: str = "",
+        status: Optional[str] = None,
+    ) -> list[Student]:
+        """Search students and optionally filter by status."""
+
+        return self.student_repository.search(
+            search_term=search_term,
+            status=status,
+        )
+
     def find_all(self) -> list[Student]:
         """Return all students."""
 

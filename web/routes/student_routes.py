@@ -33,18 +33,39 @@ def _require_login():
 
 @student_bp.route("/")
 def list_students():
-    """Display all students."""
+    """Display students with optional search and status filtering."""
 
     login_redirect = _require_login()
 
     if login_redirect:
         return login_redirect
 
-    students = student_controller.find_all()
+    search_term = request.args.get(
+        "q",
+        "",
+    ).strip()
+
+    status = request.args.get(
+        "status",
+        "",
+    ).strip()
+
+    if status not in {
+        "Active",
+        "Inactive",
+    }:
+        status = ""
+
+    students = student_controller.search_students(
+        search_term=search_term,
+        status=status or None,
+    )
 
     return render_template(
         "students/list.html",
         students=students,
+        search_term=search_term,
+        status=status,
     )
 
 

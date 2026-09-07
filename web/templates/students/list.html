@@ -7,7 +7,7 @@
 <div class="page-header">
     <div>
         <h2>Students</h2>
-        <p>View and manage registered students.</p>
+        <p>Search, filter, and manage registered students.</p>
     </div>
 
     <a
@@ -19,11 +19,137 @@
     </a>
 </div>
 
+
+<!-- Search and Filter -->
+<div class="card search-card">
+
+    <form
+        method="GET"
+        action="{{ url_for('students.list_students') }}"
+        class="search-form"
+    >
+
+        <div class="form-group search-field">
+
+            <label for="q">
+                Search Students
+            </label>
+
+            <input
+                type="search"
+                id="q"
+                name="q"
+                class="form-control"
+                value="{{ search_term }}"
+                placeholder="Student number, name, email, or program"
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div class="form-group filter-field">
+
+            <label for="status">
+                Status
+            </label>
+
+            <select
+                id="status"
+                name="status"
+                class="form-control"
+            >
+                <option
+                    value=""
+                    {% if not status %}
+                    selected
+                    {% endif %}
+                >
+                    All Students
+                </option>
+
+                <option
+                    value="Active"
+                    {% if status == "Active" %}
+                    selected
+                    {% endif %}
+                >
+                    Active
+                </option>
+
+                <option
+                    value="Inactive"
+                    {% if status == "Inactive" %}
+                    selected
+                    {% endif %}
+                >
+                    Inactive
+                </option>
+            </select>
+
+        </div>
+
+
+        <div class="search-actions">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Search
+            </button>
+
+            <a
+                href="{{ url_for('students.list_students') }}"
+                class="btn btn-secondary"
+            >
+                Clear
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<!-- Results Summary -->
+<div class="results-summary">
+
+    <div>
+        {% if search_term or status %}
+
+            <strong>
+                Search Results
+            </strong>
+
+            <span>
+                — {{ students|length }} student(s) found
+            </span>
+
+        {% else %}
+
+            <strong>
+                All Students
+            </strong>
+
+            <span>
+                — {{ students|length }} student(s)
+            </span>
+
+        {% endif %}
+    </div>
+
+</div>
+
+
+<!-- Student Table -->
 <div class="card">
 
     {% if students %}
 
     <div style="overflow-x: auto;">
+
         <table class="data-table">
 
             <thead>
@@ -45,7 +171,9 @@
 
                 <tr>
 
-                    <td>{{ student.id }}</td>
+                    <td>
+                        {{ student.id }}
+                    </td>
 
                     <td>
                         <strong>
@@ -53,28 +181,38 @@
                         </strong>
                     </td>
 
-                    <td>{{ student.full_name }}</td>
-
-                    <td>{{ student.program }}</td>
-
-                    <td>{{ student.email }}</td>
-
-                    <td>{{ student.phone }}</td>
+                    <td>
+                        {{ student.full_name }}
+                    </td>
 
                     <td>
+                        {{ student.program }}
+                    </td>
+
+                    <td>
+                        {{ student.email }}
+                    </td>
+
+                    <td>
+                        {{ student.phone }}
+                    </td>
+
+                    <td>
+
                         {% if student.is_active %}
 
-                            <span class="status-badge status-active">
-                                Active
-                            </span>
+                        <span class="status-badge status-active">
+                            Active
+                        </span>
 
                         {% else %}
 
-                            <span class="status-badge status-inactive">
-                                Inactive
-                            </span>
+                        <span class="status-badge status-inactive">
+                            Inactive
+                        </span>
 
                         {% endif %}
+
                     </td>
 
                     <td>
@@ -107,6 +245,7 @@
                             |
                         </span>
 
+
                         {% if student.is_active %}
 
                         <form
@@ -120,6 +259,7 @@
                                 'Are you sure you want to deactivate this student?'
                             );"
                         >
+
                             <button
                                 type="submit"
                                 class="action-link"
@@ -133,9 +273,12 @@
                             >
                                 Deactivate
                             </button>
+
                         </form>
 
+
                         {% else %}
+
 
                         <form
                             method="POST"
@@ -148,6 +291,7 @@
                                 'Are you sure you want to reactivate this student?'
                             );"
                         >
+
                             <button
                                 type="submit"
                                 class="action-link"
@@ -161,6 +305,7 @@
                             >
                                 Reactivate
                             </button>
+
                         </form>
 
                         {% endif %}
@@ -174,13 +319,37 @@
             </tbody>
 
         </table>
+
     </div>
 
     {% else %}
 
+    <!-- No Results -->
     <div class="empty-state">
 
-        <h3>No Students Found</h3>
+        {% if search_term or status %}
+
+        <h3>
+            No Students Found
+        </h3>
+
+        <p>
+            No students match your current search or status filter.
+        </p>
+
+        <a
+            href="{{ url_for('students.list_students') }}"
+            class="btn btn-secondary"
+            style="width: auto;"
+        >
+            Clear Search
+        </a>
+
+        {% else %}
+
+        <h3>
+            No Students Found
+        </h3>
 
         <p>
             There are currently no students registered
@@ -194,6 +363,8 @@
         >
             Add First Student
         </a>
+
+        {% endif %}
 
     </div>
 

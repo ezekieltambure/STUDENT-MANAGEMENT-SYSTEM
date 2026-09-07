@@ -172,6 +172,88 @@ class StudentRepository:
         finally:
             connection.close()
 
+    def search(
+        self,
+        search_term: str = "",
+        status: Optional[str] = None,
+    ) -> list[Student]:
+        """Search students and optionally filter by status."""
+
+        connection = get_connection()
+
+        try:
+            cursor = connection.cursor()
+
+            query = """
+                SELECT
+                    student_id,
+                    student_number,
+                    first_name,
+                    last_name,
+                    date_of_birth,
+                    gender,
+                    program,
+                    email,
+                    phone,
+                    status
+                FROM students
+                WHERE 1 = 1
+            """
+
+            parameters = []
+
+            if search_term.strip():
+                search_pattern = f"%{search_term.strip()}%"
+
+                query += """
+                    AND (
+                        student_number LIKE ?
+                        OR first_name LIKE ?
+                        OR last_name LIKE ?
+                        OR email LIKE ?
+                        OR program LIKE ?
+                    )
+                """
+
+                parameters.extend(
+                    [
+                        search_pattern,
+                        search_pattern,
+                        search_pattern,
+                        search_pattern,
+                        search_pattern,
+                    ]
+                )
+
+            if status in {
+                "Active",
+                "Inactive",
+            }:
+                query += """
+                    AND status = ?
+                """
+
+                parameters.append(status)
+
+            query += """
+                ORDER BY last_name ASC, first_name ASC
+            """
+
+            cursor.execute(
+                query,
+                parameters,
+            )
+
+            rows = cursor.fetchall()
+
+            return [
+                self._row_to_student(row)
+                for row in rows
+            ]
+
+        finally:
+            connection.close()
+
     def find_all(self) -> list[Student]:
         """Return all students ordered by last name and first name."""
 
