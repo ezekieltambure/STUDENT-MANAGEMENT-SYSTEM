@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | IBS Student Management System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Dashboard</h2>
+        <p>Welcome back, {{ session.get('full_name') }}.</p>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="label">User</span>
+        <span class="value">{{ session.get('full_name') }}</span>
+    </div>
+
+    <div class="stat-card">
+        <span class="label">Role</span>
+        <span class="value">{{ session.get('role')|capitalize }}</span>
+    </div>
+
+    <div class="stat-card">
+        <span class="label">Dashboard</span>
+        <span class="value">{{ dashboard_type|capitalize }}</span>
+    </div>
+
+    <div class="stat-card">
+        <span class="label">System</span>
+        <span class="value">Active</span>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 24px;">
+    <h3>IBS Student Management System</h3>
+    <p>
+        You are successfully logged in. Use the dashboard to manage
+        student records and access the functions available to your role.
+    </p>
+</div>
+{% endblock %}

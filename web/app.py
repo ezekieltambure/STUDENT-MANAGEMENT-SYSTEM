@@ -49,15 +49,18 @@ def create_app() -> Flask:
         if 'user_id' not in session:
             return redirect(url_for('home'))
 
-        user = User(id=session['user_id'], username=session['username'], full_name=session['full_name'], role=session['role'])
+        user = User(
+            id=session['user_id'],
+            username=session['username'],
+            full_name=session['full_name'],
+            role=session['role'],
+        )
+
         dashboard_type = dashboard_controller.get_dashboard(user)
 
-        return (
-            f"<h1>IBS Student Management System</h1>"
-            f"<h2>Welcome, {session['full_name']}!</h2>"
-            f"<p>Role: {session['role']}</p>"
-            f"<p>Dashboard: {dashboard_type}</p>"
-            f"<a href=\"{url_for('logout')}\">Logout</a>"
+        return render_template(
+            'dashboard/dashboard.html',
+            dashboard_type=dashboard_type,
         )
 
     return app
