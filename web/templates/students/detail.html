@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Student Details | IBS Student Management System{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Student Details</h2>
+        <p>View complete information for the selected student.</p>
+    </div>
+
+    <a
+        href="{{ url_for('students.list_students') }}"
+        class="btn btn-secondary"
+    >
+        ← Back to Students
+    </a>
+</div>
+
+{% if student %}
+
+<div class="card student-detail-card">
+
+    <div class="student-detail-header">
+        <div>
+            <span class="detail-label">Student Number</span>
+            <h3>{{ student.student_number }}</h3>
+        </div>
+
+        {% if student.is_active %}
+            <span class="status-badge status-active">
+                Active
+            </span>
+        {% else %}
+            <span class="status-badge status-inactive">
+                Inactive
+            </span>
+        {% endif %}
+    </div>
+
+    <div class="detail-section">
+        <h3>Personal Information</h3>
+
+        <div class="detail-grid">
+
+            <div class="detail-item">
+                <span class="detail-label">First Name</span>
+                <span class="detail-value">{{ student.first_name }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Last Name</span>
+                <span class="detail-value">{{ student.last_name }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Full Name</span>
+                <span class="detail-value">{{ student.full_name }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Date of Birth</span>
+                <span class="detail-value">
+                    {{ student.date_of_birth.strftime('%d %B %Y') }}
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Gender</span>
+                <span class="detail-value">{{ student.gender }}</span>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="detail-section">
+        <h3>Academic Information</h3>
+
+        <div class="detail-grid">
+
+            <div class="detail-item">
+                <span class="detail-label">Program</span>
+                <span class="detail-value">{{ student.program }}</span>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="detail-section">
+        <h3>Contact Information</h3>
+
+        <div class="detail-grid">
+
+            <div class="detail-item">
+                <span class="detail-label">Email Address</span>
+                <span class="detail-value">{{ student.email }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Phone Number</span>
+                <span class="detail-value">{{ student.phone }}</span>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="detail-actions">
+        <a
+            href="{{ url_for('students.list_students') }}"
+            class="btn btn-secondary"
+        >
+            Back to Students
+        </a>
+    </div>
+
+</div>
+
+{% else %}
+
+<div class="card">
+    <div class="empty-state">
+        <h3>Student Not Found</h3>
+
+        <p>
+            {{ error or "The requested student could not be found." }}
+        </p>
+
+        <a
+            href="{{ url_for('students.list_students') }}"
+            class="btn btn-primary"
+            style="width: auto;"
+        >
+            Return to Students
+        </a>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

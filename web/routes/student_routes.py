@@ -98,4 +98,28 @@ def create_student():
                 error=str(error),
             )
 
-    return render_template("students/form.html")
+    return render_template(
+        "students/form.html"
+    )
+
+
+@student_bp.route("/<int:student_id>")
+def view_student(student_id: int):
+    """Display detailed information about a student."""
+
+    if "user_id" not in session:
+        return redirect(url_for("home"))
+
+    student = student_controller.find_by_id(student_id)
+
+    if student is None:
+        return render_template(
+            "students/detail.html",
+            student=None,
+            error="Student not found.",
+        ), 404
+
+    return render_template(
+        "students/detail.html",
+        student=student,
+    )

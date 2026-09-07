@@ -387,3 +387,87 @@ select.form-control {
         min-width: 850px;
     }
 }
+/* Student Details */
+
+.student-detail-card {
+    max-width: 900px;
+}
+
+.student-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.student-detail-header h3 {
+    margin-top: 4px;
+    font-size: 1.4rem;
+}
+
+.detail-section {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.detail-section:last-of-type {
+    border-bottom: none;
+}
+
+.detail-section h3 {
+    margin-bottom: 18px;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-label {
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.detail-value {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.detail-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 24px;
+}
+
+@media (max-width: 700px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .student-detail-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .detail-actions {
+        flex-direction: column;
+    }
+
+    .detail-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
