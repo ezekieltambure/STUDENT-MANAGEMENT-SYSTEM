@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Academic Terms | IBS SMS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Academic Terms</h2>
+        <p>Manage academic semesters and teaching periods.</p>
+    </div>
+
+    <a class="btn btn-primary" href="{{ url_for('academic_terms.create_term') }}">
+        + Add Academic Term
+    </a>
+</div>
+
+{% if current_term %}
+<div class="info-card current-term-card">
+    <div>
+        <span class="card-label">CURRENT ACADEMIC TERM</span>
+        <h3>{{ current_term.term_name }} {{ current_term.academic_year }}</h3>
+        <p>
+            {{ current_term.start_date.strftime('%d %B %Y') }}
+            —
+            {{ current_term.end_date.strftime('%d %B %Y') }}
+        </p>
+    </div>
+
+    <span class="status-badge active">
+        Current
+    </span>
+</div>
+{% endif %}
+
+<div class="search-card">
+    <form method="GET" action="{{ url_for('academic_terms.list_terms') }}">
+        <div class="search-row">
+            <input
+                type="search"
+                name="q"
+                value="{{ query }}"
+                placeholder="Search by term name or academic year..."
+                aria-label="Search academic terms"
+            >
+
+            <button type="submit" class="btn btn-secondary">
+                Search
+            </button>
+
+            {% if query %}
+            <a
+                href="{{ url_for('academic_terms.list_terms') }}"
+                class="btn btn-light"
+            >
+                Clear
+            </a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<div class="content-card">
+    <div class="section-header">
+        <div>
+            <h3>Academic Term Records</h3>
+            <p>{{ terms|length }} term{% if terms|length != 1 %}s{% endif %} found.</p>
+        </div>
+    </div>
+
+    {% if terms %}
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Term</th>
+                    <th>Academic Year</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                    <th class="actions-column">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for term in terms %}
+                <tr>
+                    <td>
+                        <strong>
+                            {{ term.term_name }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        {{ term.academic_year }}
+                    </td>
+
+                    <td>
+                        {{ term.start_date.strftime('%d %b %Y') }}
+                    </td>
+
+                    <td>
+                        {{ term.end_date.strftime('%d %b %Y') }}
+                    </td>
+
+                    <td>
+                        {% if term.is_current %}
+                        <span class="status-badge active">
+                            Current
+                        </span>
+                        {% else %}
+                        <span class="status-badge">
+                            Not Current
+                        </span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <div class="action-buttons">
+                            <a
+                                class="btn btn-small"
+                                href="{{ url_for('academic_terms.view_term', term_id=term.id) }}"
+                            >
+                                View
+                            </a>
+
+                            <a
+                                class="btn btn-small btn-secondary"
+                                href="{{ url_for('academic_terms.edit_term', term_id=term.id) }}"
+                            >
+                                Edit
+                            </a>
+
+                            {% if not term.is_current %}
+                            <form
+                                method="POST"
+                                action="{{ url_for('academic_terms.set_current_term', term_id=term.id) }}"
+                                onsubmit="return confirm('Set this academic term as the current term?');"
+                            >
+                                <button
+                                    type="submit"
+                                    class="btn btn-small btn-success"
+                                >
+                                    Set Current
+                                </button>
+                            </form>
+                            {% endif %}
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('academic_terms.delete_term', term_id=term.id) }}"
+                                onsubmit="return confirm('Delete this academic term? This action cannot be undone.');"
+                            >
+                                <button
+                                    type="submit"
+                                    class="btn btn-small btn-danger"
+                                >
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>No academic terms found</h3>
+
+        {% if query %}
+        <p>
+            No academic terms matched
+            <strong>"{{ query }}"</strong>.
+        </p>
+
+        <a
+            href="{{ url_for('academic_terms.list_terms') }}"
+            class="btn btn-secondary"
+        >
+            View All Terms
+        </a>
+        {% else %}
+        <p>No academic terms have been created yet.</p>
+
+        <a
+            href="{{ url_for('academic_terms.create_term') }}"
+            class="btn btn-primary"
+        >
+            Create First Term
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

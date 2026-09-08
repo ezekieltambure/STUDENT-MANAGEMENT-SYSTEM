@@ -1,41 +1,47 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, redirect, render_template, request, session, url_for
 
 from src.controllers.login_controller import LoginController
-from src.controllers.dashboard_controller import DashboardController
-from src.models.user import User
+from src.controllers.student_controller import StudentController
+from src.controllers.department_controller import DepartmentController
+from src.controllers.program_controller import ProgramController
+from src.controllers.course_controller import CourseController
+from src.controllers.academic_term_controller import AcademicTermController
 
 from web.routes.student_routes import student_bp
 from web.routes.department_routes import department_bp
 from web.routes.program_routes import program_bp
 from web.routes.course_routes import course_bp
+from web.routes.academic_term_routes import academic_term_bp
 
 
-def create_app() -> Flask:
-    """Create and configure the IBS Student Management System web app."""
+app = Flask(__name__)
 
-    app = Flask(__name__)
+app.secret_key = "ibs-sms-development-secret-key"
 
-    app.config["SECRET_KEY"] = "dev-secret-key-change-in-production"
 
-    # Register application blueprints
-    app.register_blueprint(student_bp)
-    app.register_blueprint(department_bp)
-    app.register_blueprint(program_bp)
-    app.register_blueprint(course_bp)
+auth_controller = LoginController()
 
-    # Initialize application controllers
-    login_controller = LoginController()
-    dashboard_controller = DashboardController()
 
-    @app.route("/", methods=["GET", "POST"])
-    def home():
-        """Display the login page and process authentication."""
+@app.route("/", methods=["GET", "POST"])
+def home():
+    """Display the login page and process user authentication."""
 
-        if request.method == "POST":
-            username = request.form.get("username", "").strip()
-            password = request.form.get("password", "")
+    if "user_id" in session:
+        return redirect(url_for("dashboard"))
 
-            user = login_controller.login(
+    if request.method == "POST":
+        username = request.form.get(
+            "username",
+            "",
+        ).strip()
+
+        password = request.form.get(
+            "password",
+            "",
+        )
+
+        try:
+            user = auth_controller.login(
                 username=username,
                 password=password,
             )
@@ -53,43 +59,46 @@ def create_app() -> Flask:
 
             return redirect(url_for("dashboard"))
 
-        return render_template("login.html")
+        except (ValueError, TypeError) as exc:
+            return render_template(
+                "login.html",
+                error=str(exc),
+            )
 
-    @app.route("/logout")
-    def logout():
-        """Log the current user out of the system."""
+    return render_template(
+        "login.html",
+        error=None,
+    )
 
-        session.clear()
 
+@app.route("/dashboard")
+def dashboard():
+    """Display the authenticated user's dashboard."""
+
+    if "user_id" not in session:
         return redirect(url_for("home"))
 
-    @app.route("/dashboard")
-    def dashboard():
-        """Display the role-based dashboard with live database data."""
-
-        if "user_id" not in session:
-            return redirect(url_for("home"))
-
-        user = User(
-            id=session["user_id"],
-            username=session["username"],
-            full_name=session["full_name"],
-            role=session["role"],
-        )
-
-        dashboard_type = dashboard_controller.get_dashboard(user)
-        dashboard_data = dashboard_controller.get_dashboard_data()
-
-        return render_template(
-            "dashboard/dashboard.html",
-            dashboard_type=dashboard_type,
-            **dashboard_data,
-        )
-
-    return app
+    return render_template(
+        "dashboard/dashboard.html",
+        full_name=session.get("full_name"),
+        role=session.get("role"),
+    )
 
 
-app = create_app()
+@app.route("/logout")
+def logout():
+    """Log the current user out."""
+
+    session.clear()
+
+    return redirect(url_for("home"))
+
+
+app.register_blueprint(student_bp)
+app.register_blueprint(department_bp)
+app.register_blueprint(program_bp)
+app.register_blueprint(course_bp)
+app.register_blueprint(academic_term_bp)
 
 
 if __name__ == "__main__":
