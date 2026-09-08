@@ -92,6 +92,11 @@ class CourseService:
 
         return self.course_repository.list_all()
 
+    def search_courses(self, query: str) -> List[Course]:
+        """Search courses by code, name, or description."""
+
+        return self.course_repository.search(query)
+
     def update_course(self, course: Course) -> Course:
         """Update an existing course after validation."""
 

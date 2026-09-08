@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.course_code }} | IBS Student Management System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>{{ course.course_code }}</h2>
+        <p>{{ course.course_name }}</p>
+    </div>
+
+    <div class="action-buttons">
+        <a
+            href="{{ url_for('courses.edit_course', course_id=course.id) }}"
+            class="btn btn-primary"
+        >
+            Edit Course
+        </a>
+
+        <a
+            href="{{ url_for('courses.list_courses') }}"
+            class="btn btn-secondary"
+        >
+            ← Back to Courses
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="section-header">
+        <div>
+            <h3>Course Information</h3>
+            <p>Detailed information about this academic course.</p>
+        </div>
+    </div>
+
+    <div class="details-grid">
+
+        <div class="detail-item">
+            <span class="detail-label">Course Code</span>
+            <strong>{{ course.course_code }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Course Name</span>
+            <strong>{{ course.course_name }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Credit Hours</span>
+            <strong>{{ course.credit_hours }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Department</span>
+
+            {% if department %}
+                <strong>{{ department.name }}</strong>
+                <span class="text-muted">{{ department.code }}</span>
+            {% else %}
+                <span class="text-muted">Unknown Department</span>
+            {% endif %}
+        </div>
+
+        <div class="detail-item detail-item-full">
+            <span class="detail-label">Description</span>
+
+            {% if course.description %}
+                <p>{{ course.description }}</p>
+            {% else %}
+                <p class="text-muted">
+                    No description has been provided for this course.
+                </p>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+<div class="card danger-zone">
+    <div class="section-header">
+        <div>
+            <h3>Course Management</h3>
+            <p>Permanent actions for this course.</p>
+        </div>
+    </div>
+
+    <form
+        method="POST"
+        action="{{ url_for('courses.delete_course', course_id=course.id) }}"
+        onsubmit="return confirm('Are you sure you want to permanently delete {{ course.course_code }} - {{ course.course_name }}?');"
+    >
+        <button type="submit" class="btn btn-danger">
+            Delete Course
+        </button>
+    </form>
+</div>
+{% endblock %}

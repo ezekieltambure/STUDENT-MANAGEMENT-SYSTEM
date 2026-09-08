@@ -153,6 +153,42 @@ class CourseRepository:
         finally:
             connection.close()
 
+    def search(self, query: str) -> List[Course]:
+        """Search courses by code, name, or description."""
+
+        query = query.strip()
+
+        if not query:
+            return self.list_all()
+
+        connection = get_connection()
+
+        try:
+            search_term = f"%{query}%"
+
+            rows = connection.execute(
+                """
+                SELECT
+                    course_id,
+                    course_code,
+                    course_name,
+                    description,
+                    credit_hours,
+                    department_id
+                FROM courses
+                WHERE course_code LIKE ?
+                   OR course_name LIKE ?
+                   OR description LIKE ?
+                ORDER BY course_code
+                """,
+                (search_term, search_term, search_term),
+            ).fetchall()
+
+            return [self._row_to_course(row) for row in rows]
+
+        finally:
+            connection.close()
+
     def update(self, course: Course) -> Course:
         """Update an existing course."""
 

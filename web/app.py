@@ -7,6 +7,7 @@ from src.models.user import User
 from web.routes.student_routes import student_bp
 from web.routes.department_routes import department_bp
 from web.routes.program_routes import program_bp
+from web.routes.course_routes import course_bp
 
 
 def create_app() -> Flask:
@@ -20,6 +21,7 @@ def create_app() -> Flask:
     app.register_blueprint(student_bp)
     app.register_blueprint(department_bp)
     app.register_blueprint(program_bp)
+    app.register_blueprint(course_bp)
 
     # Initialize application controllers
     login_controller = LoginController()

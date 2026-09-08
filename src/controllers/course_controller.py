@@ -66,6 +66,11 @@ class CourseController:
 
         return self.course_service.get_all_courses()
 
+    def search_courses(self, query: str) -> List[Course]:
+        """Search courses by code, name, or description."""
+
+        return self.course_service.search_courses(query)
+
     def update_course(self, course: Course) -> Course:
         """Update an existing course."""
 

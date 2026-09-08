@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% if course %}
+    {% set page_title = "Edit Course" %}
+{% else %}
+    {% set page_title = "Add Course" %}
+{% endif %}
+
+{% block title %}{{ page_title }} | IBS Student Management System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>{{ page_title }}</h2>
+        <p>
+            {% if course %}
+                Update the information for {{ course.course_code }}.
+            {% else %}
+                Register a new academic course in the system.
+            {% endif %}
+        </p>
+    </div>
+
+    <a href="{{ url_for('courses.list_courses') }}" class="btn btn-secondary">
+        ← Back to Courses
+    </a>
+</div>
+
+<div class="card form-card">
+
+    {% if error %}
+        <div class="alert alert-danger">
+            <strong>Unable to save course:</strong>
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form
+        method="POST"
+        action="{% if course %}{{ url_for('courses.edit_course', course_id=course.id) }}{% else %}{{ url_for('courses.create_course') }}{% endif %}"
+    >
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label for="course_code">Course Code *</label>
+
+                <input
+                    type="text"
+                    id="course_code"
+                    name="course_code"
+                    value="{{ request.form.get('course_code', course.course_code if course else '') }}"
+                    placeholder="e.g. IT0201"
+                    required
+                >
+
+                <small>
+                    Enter the official course code.
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label for="course_name">Course Name *</label>
+
+                <input
+                    type="text"
+                    id="course_name"
+                    name="course_name"
+                    value="{{ request.form.get('course_name', course.course_name if course else '') }}"
+                    placeholder="e.g. Database Systems"
+                    required
+                >
+
+                <small>
+                    Enter the official course name.
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label for="credit_hours">Credit Hours *</label>
+
+                <input
+                    type="number"
+                    id="credit_hours"
+                    name="credit_hours"
+                    value="{{ request.form.get('credit_hours', course.credit_hours if course else '') }}"
+                    min="1"
+                    step="1"
+                    placeholder="e.g. 3"
+                    required
+                >
+
+                <small>
+                    Credit hours must be greater than zero.
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label for="department_id">Department *</label>
+
+                <select
+                    id="department_id"
+                    name="department_id"
+                    required
+                >
+                    <option value="">Select Department</option>
+
+                    {% for department in departments %}
+                        <option
+                            value="{{ department.id }}"
+                            {% if request.form.get('department_id', course.department_id if course else '')|string == department.id|string %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ department.department_code }} — {{ department.department_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <small>
+                    Select the department responsible for this course.
+                </small>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+
+            <textarea
+                id="description"
+                name="description"
+                rows="5"
+                placeholder="Enter a brief description of the course..."
+            >{{ request.form.get('description', course.description if course else '') }}</textarea>
+
+            <small>
+                Optional. Provide a short description of the course.
+            </small>
+        </div>
+
+        <div class="form-actions">
+            <a
+                href="{{ url_for('courses.list_courses') }}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                {% if course %}
+                    Save Changes
+                {% else %}
+                    Create Course
+                {% endif %}
+            </button>
+        </div>
+
+    </form>
+</div>
+{% endblock %}
